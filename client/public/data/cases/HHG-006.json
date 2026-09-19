@@ -1,0 +1,120 @@
+{
+  "case_id": "HHG-006",
+  "case": {
+    "status": "open",
+    "verdict": "uncertain",
+    "fraud_probability": 0.738,
+    "pattern": "card_not_present_new_device",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3570470",
+      "3579655",
+      "3585834",
+      "3586692",
+      "3588834"
+    ],
+    "first_suspicious_txn_id": "3570470",
+    "connected_card_ids": [],
+    "connected_device_profiles": [
+      "Trident/7.0 | Windows 7 | ie 11.0 for desktop | 1920x1080"
+    ],
+    "exposure_usd": 295.77,
+    "evidence": [
+      {
+        "claim": "Flagged transaction 3476682 is a online purchase for $482.12 with bank risk score 0.25; the score is treated as a trigger, not a verdict.",
+        "source": "graph",
+        "ref": "query:transaction_context(transaction_id=3476682)",
+        "entity_ids": [
+          "3476682"
+        ]
+      },
+      {
+        "claim": "Identity record for 3476682 shows device profile Trident/7.0 | Windows 7 | ie 11.0 for desktop | 1920x1080.",
+        "source": "graph",
+        "ref": "query:device_profile(transaction_id=3476682)",
+        "entity_ids": [
+          "3476682",
+          "Trident/7.0 | Windows 7 | ie 11.0 for desktop | 1920x1080"
+        ]
+      },
+      {
+        "claim": "Customer C07297 has 261 transactions in the graph; the flagged activity was compared with the customer's own sequence rather than judged in isolation.",
+        "source": "graph",
+        "ref": "query:customer_window(customer_id=C07297)",
+        "entity_ids": [
+          "C07297",
+          "3570470",
+          "3579655",
+          "3585834",
+          "3586692",
+          "3588834"
+        ]
+      },
+      {
+        "claim": "The customer directly disputes the flagged transaction, which is a customer-originated signal under policy R2/R3/R7.",
+        "source": "customer",
+        "ref": "case_pack:HHG-006",
+        "entity_ids": [
+          "C07297",
+          "3476682"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-0011",
+      "CC-0018",
+      "CC-0019",
+      "CC-0029",
+      "CC-0031"
+    ],
+    "summary": "The agent investigated 3476682 after a customer_report trigger. It assessed the activity as uncertain with a fraud probability of 74%. The decision uses graph evidence, identity context, and the policy route; it does not treat the risk score as a verdict.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-HHG-006"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 1,
+      "assumed_response": "Customer denies the transaction based on the customer_report trigger."
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1: a disputed transaction is not blocked on a weak signal; verify before an irreversible action."
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2/R7: every customer dispute opens an internal case."
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denial supports blocking the card; approval route follows exposure."
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2: retain the complete investigation record."
+      }
+    ],
+    "what_changed": "The initial recommendation was reversible verification. After the assumed denial, the final recommendation escalates to card blocking and the required report route."
+  },
+  "sar": {
+    "file": false,
+    "reason": "No suspicious activity report: the current evidence does not meet policy 3a reporting conditions.",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "Stopped at a defensible decision boundary under policy 6; protected actions remain approval-gated.",
+  "tool_calls": 6,
+  "tokens": 0,
+  "latency_s": 0.0
+}

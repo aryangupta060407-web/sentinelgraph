@@ -1,0 +1,116 @@
+{
+  "case_id": "HHG-017",
+  "case": {
+    "status": "open",
+    "verdict": "uncertain",
+    "fraud_probability": 0.514,
+    "pattern": "card_not_present_fraud",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3495061",
+      "3495066",
+      "3495090",
+      "3573010",
+      "3573022"
+    ],
+    "first_suspicious_txn_id": "3495061",
+    "connected_card_ids": [],
+    "connected_device_profiles": [
+      "Windows | Windows 10 | chrome 65.0 | 1920x1080"
+    ],
+    "exposure_usd": 1149.84,
+    "evidence": [
+      {
+        "claim": "Flagged transaction 3450629 is a online purchase for $100.09 with bank risk score 0.57; the score is treated as a trigger, not a verdict.",
+        "source": "graph",
+        "ref": "query:transaction_context(transaction_id=3450629)",
+        "entity_ids": [
+          "3450629"
+        ]
+      },
+      {
+        "claim": "Identity record for 3450629 shows device profile Windows | Windows 10 | chrome 65.0 | 1920x1080.",
+        "source": "graph",
+        "ref": "query:device_profile(transaction_id=3450629)",
+        "entity_ids": [
+          "3450629",
+          "Windows | Windows 10 | chrome 65.0 | 1920x1080"
+        ]
+      },
+      {
+        "claim": "Customer C04570 has 59 transactions in the graph; the flagged activity was compared with the customer's own sequence rather than judged in isolation.",
+        "source": "graph",
+        "ref": "query:customer_window(customer_id=C04570)",
+        "entity_ids": [
+          "C04570",
+          "3495061",
+          "3495066",
+          "3495090",
+          "3573010",
+          "3573022"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-0001",
+      "CC-0007",
+      "CC-0012",
+      "CC-0014",
+      "CC-0022"
+    ],
+    "summary": "The agent investigated 3450629 after a risk_score trigger. It assessed the activity as uncertain with a fraud probability of 51%. The decision uses graph evidence, identity context, and the policy route; it does not treat the risk score as a verdict.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-HHG-017"
+  },
+  "evidence_requests": [
+    {
+      "type": "step_up_auth",
+      "asked_after_step": 1,
+      "assumed_response": "No response was provided in the benchmark; keep the case open and escalate for analyst review."
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "STEP_UP_AUTH",
+        "route": "auto",
+        "reason": "R1: evidence is ambiguous and probability is below the block threshold."
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: evidence request or fraud probability above 0.30 requires a case."
+      }
+    ],
+    "final": [
+      {
+        "action": "STEP_UP_AUTH",
+        "route": "auto",
+        "reason": "R1: evidence is ambiguous and probability is below the block threshold."
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: evidence request or fraud probability above 0.30 requires a case."
+      },
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R8: uncertainty plus exposure above $500 requires analyst escalation."
+      }
+    ],
+    "what_changed": "No decisive response was supplied, so the case remains open and the reversible control is retained."
+  },
+  "sar": {
+    "file": false,
+    "reason": "No suspicious activity report: the current evidence does not meet policy 3a reporting conditions.",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "Stopped at a defensible decision boundary under policy 6; protected actions remain approval-gated.",
+  "tool_calls": 6,
+  "tokens": 0,
+  "latency_s": 0.0
+}

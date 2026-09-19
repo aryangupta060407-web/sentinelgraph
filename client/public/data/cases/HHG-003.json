@@ -1,0 +1,109 @@
+{
+  "case_id": "HHG-003",
+  "case": {
+    "status": "open",
+    "verdict": "uncertain",
+    "fraud_probability": 0.72,
+    "pattern": "out_of_region_use",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3587557",
+      "3588805",
+      "3589331",
+      "3589506",
+      "3590084"
+    ],
+    "first_suspicious_txn_id": "3587557",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 481.17,
+    "evidence": [
+      {
+        "claim": "Flagged transaction 3530164 is a in_person purchase for $49.00 with bank risk score 0.40; the score is treated as a trigger, not a verdict.",
+        "source": "graph",
+        "ref": "query:transaction_context(transaction_id=3530164)",
+        "entity_ids": [
+          "3530164"
+        ]
+      },
+      {
+        "claim": "Customer C08623 has 1140 transactions in the graph; the flagged activity was compared with the customer's own sequence rather than judged in isolation.",
+        "source": "graph",
+        "ref": "query:customer_window(customer_id=C08623)",
+        "entity_ids": [
+          "C08623",
+          "3587557",
+          "3588805",
+          "3589331",
+          "3589506",
+          "3590084"
+        ]
+      },
+      {
+        "claim": "The customer directly disputes the flagged transaction, which is a customer-originated signal under policy R2/R3/R7.",
+        "source": "customer",
+        "ref": "case_pack:HHG-003",
+        "entity_ids": [
+          "C08623",
+          "3530164"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-0002",
+      "CC-0004",
+      "CC-0005",
+      "CC-0006",
+      "CC-0016"
+    ],
+    "summary": "The agent investigated 3530164 after a customer_report trigger. It assessed the activity as uncertain with a fraud probability of 72%. The decision uses graph evidence, identity context, and the policy route; it does not treat the risk score as a verdict.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-HHG-003"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 1,
+      "assumed_response": "Customer denies the transaction based on the customer_report trigger."
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1: a disputed transaction is not blocked on a weak signal; verify before an irreversible action."
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2/R7: every customer dispute opens an internal case."
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denial supports blocking the card; approval route follows exposure."
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2: retain the complete investigation record."
+      }
+    ],
+    "what_changed": "The initial recommendation was reversible verification. After the assumed denial, the final recommendation escalates to card blocking and the required report route."
+  },
+  "sar": {
+    "file": false,
+    "reason": "No suspicious activity report: the current evidence does not meet policy 3a reporting conditions.",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "Stopped at a defensible decision boundary under policy 6; protected actions remain approval-gated.",
+  "tool_calls": 6,
+  "tokens": 0,
+  "latency_s": 0.0
+}

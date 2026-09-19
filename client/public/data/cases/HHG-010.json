@@ -1,0 +1,113 @@
+{
+  "case_id": "HHG-010",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.795,
+    "pattern": "card_not_present_new_device",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3475344",
+      "3492086",
+      "3506725",
+      "3519858",
+      "3577244"
+    ],
+    "first_suspicious_txn_id": "3475344",
+    "connected_card_ids": [],
+    "connected_device_profiles": [
+      "Windows | Windows 10 | edge 16.0 | 1366x768"
+    ],
+    "exposure_usd": 1405.04,
+    "evidence": [
+      {
+        "claim": "Flagged transaction 3506725 is a online purchase for $1000.03 with bank risk score 0.90; the score is treated as a trigger, not a verdict.",
+        "source": "graph",
+        "ref": "query:transaction_context(transaction_id=3506725)",
+        "entity_ids": [
+          "3506725"
+        ]
+      },
+      {
+        "claim": "Identity record for 3506725 shows device profile Windows | Windows 10 | edge 16.0 | 1366x768.",
+        "source": "graph",
+        "ref": "query:device_profile(transaction_id=3506725)",
+        "entity_ids": [
+          "3506725",
+          "Windows | Windows 10 | edge 16.0 | 1366x768"
+        ]
+      },
+      {
+        "claim": "Customer C10434 has 36 transactions in the graph; the flagged activity was compared with the customer's own sequence rather than judged in isolation.",
+        "source": "graph",
+        "ref": "query:customer_window(customer_id=C10434)",
+        "entity_ids": [
+          "C10434",
+          "3475344",
+          "3492086",
+          "3506725",
+          "3519858",
+          "3577244"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-0011",
+      "CC-0018",
+      "CC-0019",
+      "CC-0029",
+      "CC-0031"
+    ],
+    "summary": "The agent investigated 3506725 after a risk_score trigger. It assessed the activity as fraud with a fraud probability of 80%. The decision uses graph evidence, identity context, and the policy route; it does not treat the risk score as a verdict.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-HHG-010"
+  },
+  "evidence_requests": [],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: fraud probability is above the case-opening threshold."
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2/R5: protective card action is recommended and approval-gated."
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2/R5: preserve evidence and case memory."
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "3a/R6: report is required for qualifying exposure or connected activity."
+      }
+    ],
+    "what_changed": "nothing"
+  },
+  "sar": {
+    "file": true,
+    "reason": "FILE_REPORT is recommended under policy 3a because the activity is strongly suspected and meets an exposure or connection condition.",
+    "narrative": "Customer C10434 used card C10434-K1 for activity beginning on 2016-12-02. Transaction 3506725 was processed through the online channel for $1000.03. The bank risk model assigned a score of 0.90, and the investigation found identity or behavioral evidence inconsistent with the customer's baseline. The activity was reviewed against connected transactions and prior closed cases. The device profile observed was Windows | Windows 10 | edge 16.0 | 1366x768. The activity is suspicious because the risk and graph evidence support coordinated or unauthorized activity. The bank recommends protective action and retains the full evidence trail for review.",
+    "subjects": [
+      "C10434",
+      "C10434-K1",
+      "3506725",
+      "Windows | Windows 10 | edge 16.0 | 1366x768"
+    ],
+    "total_amount_usd": 1405.04,
+    "activity_dates": [
+      "2016-12-02",
+      "2016-12-02"
+    ]
+  },
+  "stop_reason": "Stopped at a defensible decision boundary under policy 6; protected actions remain approval-gated.",
+  "tool_calls": 6,
+  "tokens": 0,
+  "latency_s": 0.0
+}

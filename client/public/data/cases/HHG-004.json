@@ -1,0 +1,122 @@
+{
+  "case_id": "HHG-004",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.787,
+    "pattern": "card_testing",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3583503",
+      "3584017",
+      "3585446",
+      "3585726",
+      "3587858"
+    ],
+    "first_suspicious_txn_id": "3583503",
+    "connected_card_ids": [],
+    "connected_device_profiles": [
+      "firefox 47.0"
+    ],
+    "exposure_usd": 147.19,
+    "evidence": [
+      {
+        "claim": "Flagged transaction 3583227 is a online purchase for $128.33 with bank risk score 0.34; the score is treated as a trigger, not a verdict.",
+        "source": "graph",
+        "ref": "query:transaction_context(transaction_id=3583227)",
+        "entity_ids": [
+          "3583227"
+        ]
+      },
+      {
+        "claim": "Identity record for 3583227 shows device profile firefox 47.0.",
+        "source": "graph",
+        "ref": "query:device_profile(transaction_id=3583227)",
+        "entity_ids": [
+          "3583227",
+          "firefox 47.0"
+        ]
+      },
+      {
+        "claim": "Customer C08106 has 216 transactions in the graph; the flagged activity was compared with the customer's own sequence rather than judged in isolation.",
+        "source": "graph",
+        "ref": "query:customer_window(customer_id=C08106)",
+        "entity_ids": [
+          "C08106",
+          "3583503",
+          "3584017",
+          "3585446",
+          "3585726",
+          "3587858"
+        ]
+      },
+      {
+        "claim": "The customer directly disputes the flagged transaction, which is a customer-originated signal under policy R2/R3/R7.",
+        "source": "customer",
+        "ref": "case_pack:HHG-004",
+        "entity_ids": [
+          "C08106",
+          "3583227"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-0137",
+      "CC-0290",
+      "CC-0370",
+      "CC-0696",
+      "CC-1235"
+    ],
+    "summary": "The agent investigated 3583227 after a customer_report trigger. It assessed the activity as fraud with a fraud probability of 79%. The decision uses graph evidence, identity context, and the policy route; it does not treat the risk score as a verdict.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-HHG-004"
+  },
+  "evidence_requests": [],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: fraud probability is above the case-opening threshold."
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2/R5: protective card action is recommended and approval-gated."
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2/R5: preserve evidence and case memory."
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "3a/R6: report is required for qualifying exposure or connected activity."
+      }
+    ],
+    "what_changed": "nothing"
+  },
+  "sar": {
+    "file": true,
+    "reason": "FILE_REPORT is recommended under policy 3a because the activity is strongly suspected and meets an exposure or connection condition.",
+    "narrative": "Customer C08106 used card C08106-K1 for activity beginning on 2016-12-29. Transaction 3583227 was processed through the online channel for $128.33. The bank risk model assigned a score of 0.34, and the investigation found identity or behavioral evidence inconsistent with the customer's baseline. The activity was reviewed against connected transactions and prior closed cases. The device profile observed was firefox 47.0. The activity is suspicious because the customer disputed the transaction and the evidence supports unauthorized use. The bank recommends protective action and retains the full evidence trail for review.",
+    "subjects": [
+      "C08106",
+      "C08106-K1",
+      "3583227",
+      "firefox 47.0"
+    ],
+    "total_amount_usd": 147.19,
+    "activity_dates": [
+      "2016-12-29",
+      "2016-12-29"
+    ]
+  },
+  "stop_reason": "Stopped at a defensible decision boundary under policy 6; protected actions remain approval-gated.",
+  "tool_calls": 6,
+  "tokens": 0,
+  "latency_s": 0.0
+}

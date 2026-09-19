@@ -1,0 +1,122 @@
+{
+  "case_id": "HHG-011",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.815,
+    "pattern": "card_testing",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3584962",
+      "3584985",
+      "3585055",
+      "3585064",
+      "3585345"
+    ],
+    "first_suspicious_txn_id": "3584962",
+    "connected_card_ids": [],
+    "connected_device_profiles": [
+      "SM-G610F Build/NRD90M | chrome 66.0 for android"
+    ],
+    "exposure_usd": 107.6,
+    "evidence": [
+      {
+        "claim": "Flagged transaction 3583368 is a online purchase for $131.30 with bank risk score 0.39; the score is treated as a trigger, not a verdict.",
+        "source": "graph",
+        "ref": "query:transaction_context(transaction_id=3583368)",
+        "entity_ids": [
+          "3583368"
+        ]
+      },
+      {
+        "claim": "Identity record for 3583368 shows device profile SM-G610F Build/NRD90M | chrome 66.0 for android.",
+        "source": "graph",
+        "ref": "query:device_profile(transaction_id=3583368)",
+        "entity_ids": [
+          "3583368",
+          "SM-G610F Build/NRD90M | chrome 66.0 for android"
+        ]
+      },
+      {
+        "claim": "Customer C11923 has 10361 transactions in the graph; the flagged activity was compared with the customer's own sequence rather than judged in isolation.",
+        "source": "graph",
+        "ref": "query:customer_window(customer_id=C11923)",
+        "entity_ids": [
+          "C11923",
+          "3584962",
+          "3584985",
+          "3585055",
+          "3585064",
+          "3585345"
+        ]
+      },
+      {
+        "claim": "The customer directly disputes the flagged transaction, which is a customer-originated signal under policy R2/R3/R7.",
+        "source": "customer",
+        "ref": "case_pack:HHG-011",
+        "entity_ids": [
+          "C11923",
+          "3583368"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-0031",
+      "CC-0137",
+      "CC-0290",
+      "CC-0370",
+      "CC-1056"
+    ],
+    "summary": "The agent investigated 3583368 after a customer_report trigger. It assessed the activity as fraud with a fraud probability of 81%. The decision uses graph evidence, identity context, and the policy route; it does not treat the risk score as a verdict.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-HHG-011"
+  },
+  "evidence_requests": [],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: fraud probability is above the case-opening threshold."
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2/R5: protective card action is recommended and approval-gated."
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2/R5: preserve evidence and case memory."
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "3a/R6: report is required for qualifying exposure or connected activity."
+      }
+    ],
+    "what_changed": "nothing"
+  },
+  "sar": {
+    "file": true,
+    "reason": "FILE_REPORT is recommended under policy 3a because the activity is strongly suspected and meets an exposure or connection condition.",
+    "narrative": "Customer C11923 used card C11923-K2 for activity beginning on 2016-12-29. Transaction 3583368 was processed through the online channel for $131.30. The bank risk model assigned a score of 0.39, and the investigation found identity or behavioral evidence inconsistent with the customer's baseline. The activity was reviewed against connected transactions and prior closed cases. The device profile observed was SM-G610F Build/NRD90M | chrome 66.0 for android. The activity is suspicious because the customer disputed the transaction and the evidence supports unauthorized use. The bank recommends protective action and retains the full evidence trail for review.",
+    "subjects": [
+      "C11923",
+      "C11923-K2",
+      "3583368",
+      "SM-G610F Build/NRD90M | chrome 66.0 for android"
+    ],
+    "total_amount_usd": 107.6,
+    "activity_dates": [
+      "2016-12-29",
+      "2016-12-29"
+    ]
+  },
+  "stop_reason": "Stopped at a defensible decision boundary under policy 6; protected actions remain approval-gated.",
+  "tool_calls": 6,
+  "tokens": 0,
+  "latency_s": 0.0
+}

@@ -1,0 +1,111 @@
+{
+  "case_id": "HHG-014",
+  "case": {
+    "status": "open",
+    "verdict": "uncertain",
+    "fraud_probability": 0.328,
+    "pattern": "card_not_present_new_device",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3536091",
+      "3537024",
+      "3551004",
+      "3558767",
+      "3578937"
+    ],
+    "first_suspicious_txn_id": "3536091",
+    "connected_card_ids": [],
+    "connected_device_profiles": [
+      "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080"
+    ],
+    "exposure_usd": 193.83,
+    "evidence": [
+      {
+        "claim": "Flagged transaction 3478561 is a online purchase for $74.96 with bank risk score 0.05; the score is treated as a trigger, not a verdict.",
+        "source": "graph",
+        "ref": "query:transaction_context(transaction_id=3478561)",
+        "entity_ids": [
+          "3478561"
+        ]
+      },
+      {
+        "claim": "Identity record for 3478561 shows device profile SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080.",
+        "source": "graph",
+        "ref": "query:device_profile(transaction_id=3478561)",
+        "entity_ids": [
+          "3478561",
+          "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080"
+        ]
+      },
+      {
+        "claim": "Customer C13487 has 85 transactions in the graph; the flagged activity was compared with the customer's own sequence rather than judged in isolation.",
+        "source": "graph",
+        "ref": "query:customer_window(customer_id=C13487)",
+        "entity_ids": [
+          "C13487",
+          "3536091",
+          "3537024",
+          "3551004",
+          "3558767",
+          "3578937"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-0011",
+      "CC-0018",
+      "CC-0019",
+      "CC-0029",
+      "CC-0031"
+    ],
+    "summary": "The agent investigated 3478561 after a analyst_request trigger. It assessed the activity as uncertain with a fraud probability of 33%. The decision uses graph evidence, identity context, and the policy route; it does not treat the risk score as a verdict.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-HHG-014"
+  },
+  "evidence_requests": [
+    {
+      "type": "step_up_auth",
+      "asked_after_step": 1,
+      "assumed_response": "No response was provided in the benchmark; keep the case open and escalate for analyst review."
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "STEP_UP_AUTH",
+        "route": "auto",
+        "reason": "R1: evidence is ambiguous and probability is below the block threshold."
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: evidence request or fraud probability above 0.30 requires a case."
+      }
+    ],
+    "final": [
+      {
+        "action": "STEP_UP_AUTH",
+        "route": "auto",
+        "reason": "R1: evidence is ambiguous and probability is below the block threshold."
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: evidence request or fraud probability above 0.30 requires a case."
+      }
+    ],
+    "what_changed": "No decisive response was supplied, so the case remains open and the reversible control is retained."
+  },
+  "sar": {
+    "file": false,
+    "reason": "No suspicious activity report: the current evidence does not meet policy 3a reporting conditions.",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "Stopped at a defensible decision boundary under policy 6; protected actions remain approval-gated.",
+  "tool_calls": 6,
+  "tokens": 0,
+  "latency_s": 0.0
+}

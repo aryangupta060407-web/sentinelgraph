@@ -1,0 +1,100 @@
+{
+  "case_id": "HHG-007",
+  "case": {
+    "status": "open",
+    "verdict": "uncertain",
+    "fraud_probability": 0.679,
+    "pattern": "out_of_region_use",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3589112",
+      "3589171",
+      "3590327",
+      "3590655",
+      "3590736"
+    ],
+    "first_suspicious_txn_id": "3589112",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 399.02,
+    "evidence": [
+      {
+        "claim": "Flagged transaction 3514948 is a in_person purchase for $111.92 with bank risk score 0.87; the score is treated as a trigger, not a verdict.",
+        "source": "graph",
+        "ref": "query:transaction_context(transaction_id=3514948)",
+        "entity_ids": [
+          "3514948"
+        ]
+      },
+      {
+        "claim": "Customer C09933 has 2792 transactions in the graph; the flagged activity was compared with the customer's own sequence rather than judged in isolation.",
+        "source": "graph",
+        "ref": "query:customer_window(customer_id=C09933)",
+        "entity_ids": [
+          "C09933",
+          "3589112",
+          "3589171",
+          "3590327",
+          "3590655",
+          "3590736"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-0002",
+      "CC-0004",
+      "CC-0005",
+      "CC-0006",
+      "CC-0016"
+    ],
+    "summary": "The agent investigated 3514948 after a risk_score trigger. It assessed the activity as uncertain with a fraud probability of 68%. The decision uses graph evidence, identity context, and the policy route; it does not treat the risk score as a verdict.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-HHG-007"
+  },
+  "evidence_requests": [
+    {
+      "type": "step_up_auth",
+      "asked_after_step": 1,
+      "assumed_response": "No response was provided in the benchmark; keep the case open and escalate for analyst review."
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "STEP_UP_AUTH",
+        "route": "auto",
+        "reason": "R1: evidence is ambiguous and probability is below the block threshold."
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: evidence request or fraud probability above 0.30 requires a case."
+      }
+    ],
+    "final": [
+      {
+        "action": "STEP_UP_AUTH",
+        "route": "auto",
+        "reason": "R1: evidence is ambiguous and probability is below the block threshold."
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: evidence request or fraud probability above 0.30 requires a case."
+      }
+    ],
+    "what_changed": "No decisive response was supplied, so the case remains open and the reversible control is retained."
+  },
+  "sar": {
+    "file": false,
+    "reason": "No suspicious activity report: the current evidence does not meet policy 3a reporting conditions.",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "Stopped at a defensible decision boundary under policy 6; protected actions remain approval-gated.",
+  "tool_calls": 6,
+  "tokens": 0,
+  "latency_s": 0.0
+}
