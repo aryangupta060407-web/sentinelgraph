@@ -34,6 +34,15 @@ import {
 
 type CaseAnswer = {
   case_id: string;
+  agent?: {
+    mode: string;
+    initial_confidence: number;
+    final_confidence: number;
+    initial_probability: number;
+    final_probability: number;
+    activity_trace: { time: string; status: string; step: string; label: string; detail: string; source?: string }[];
+    changed_recommendation: string;
+  };
   case: {
     status: string;
     verdict: "fraud" | "legitimate" | "uncertain";
@@ -131,7 +140,17 @@ export default function Home() {
   }, [answers]);
 
   const selectCase = (id: string) => { setSelectedId(id); setView("investigation"); };
-  const runInvestigation = () => { setRunning(true); window.setTimeout(() => { setRunning(false); setView("investigation"); }, 650); };
+  const runInvestigation = async () => {
+    setRunning(true);
+    try {
+      const response = await fetch(`/api/cases/${selectedId}/investigate`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ trigger: selectedMeta.trigger }) });
+      if (response.ok) {
+        const live = await response.json();
+        setAnswers((current) => ({ ...current, [selectedId]: live }));
+      }
+    } catch { /* GitHub Pages remains usable with official benchmark reference data. */ }
+    window.setTimeout(() => { setRunning(false); setView("investigation"); }, 450);
+  };
 
   return <div className="app-shell">
     <aside className={`sidebar ${sidebarOpen ? "open" : "closed"}`}>
@@ -167,7 +186,9 @@ function InvestigationView({ meta, answer, running, onBack, onRun }: { meta: Cas
   return <><section className="investigation-heading"><button className="back-link" onClick={onBack}><ArrowRight size={14} className="back-arrow" /> Back to case queue</button><div className="heading-line"><div><div className="eyebrow"><CircleDot size={13} /> CASE {meta.id} / INVESTIGATION RECORD</div><h1>{meta.customer}<span className="heading-separator">·</span>{meta.txn}</h1><p>{meta.triggerLabel} opened {meta.opened} · {meta.channel.replace("_", " ")} channel</p></div><div className="heading-actions"><Pill tone={answer.case.verdict === "fraud" ? "red" : answer.case.verdict === "uncertain" ? "amber" : "green"}>{verdictLabel[answer.case.verdict]}</Pill><button className="primary-button" onClick={onRun}><Activity size={15} /> Re-run investigation</button></div></div></section>
   <section className="investigation-stats"><div className="risk-card"><div className="risk-card-top"><span>Fraud probability</span><span className="risk-status">{answer.case.status.replace("_", " ")}</span></div><div className="risk-number">{Math.round(probability * 100)}<small>%</small></div><MetricBar value={probability} tone={probability > .7 ? "red" : "amber"} /><div className="risk-foot"><span>Assessment confidence</span><b>{Math.round(probability * 100)}%</b></div></div><div className="mini-stat"><span>Pattern detected</span><strong>{slug(answer.case.pattern)}</strong><small>Known pattern library</small></div><div className="mini-stat"><span>Exposure identified</span><strong>{formatMoney(answer.case.exposure_usd || meta.amount)}</strong><small>{answer.case.affected_txn_ids.length || 1} transaction(s) in episode</small></div><div className="mini-stat"><span>Approval route</span><strong>{answer.next_best_actions.final[0]?.route || "auto"}</strong><small>Protected controls remain gated</small></div></section>
   <section className="investigation-grid"><div className="panel evidence-panel"><div className="panel-header"><div><div className="eyebrow">GRAPH-RAG EVIDENCE</div><h2>What the agent found</h2></div><Pill tone="cyan">{answer.case.evidence.length} claims grounded</Pill></div><div className="graph-path">{graphNodes.map((node, index) => <div className="graph-step" key={`${node.type}-${node.id}`}><div className={`graph-node ${index === 0 ? "root" : ""}`}><span>{node.type}</span><b>{node.id}</b></div>{index < graphNodes.length - 1 && <div className="graph-link"><ArrowRight size={14} /></div>}</div>)}</div><div className="evidence-list">{answer.case.evidence.map((item, index) => <div className="evidence-item" key={`${item.ref}-${index}`}><div className={`evidence-bullet ${item.source}`}><Fingerprint size={14} /></div><div><div className="evidence-meta"><b>{item.source}</b><span>{item.ref}</span></div><p>{item.claim}</p><small>{item.entity_ids.join(" · ")}</small></div></div>)}</div></div><div className="panel decision-panel"><div className="panel-header"><div><div className="eyebrow">DECISION TRACE</div><h2>Why this action</h2></div><FileText size={18} className="panel-icon" /></div><div className="decision-summary"><div className="decision-orb"><Target size={18} /></div><div><strong>{slug(answer.case.pattern)}</strong><p>{answer.case.summary}</p></div></div><div className="uncertainty-block"><div><span>Uncertainty remaining</span><b>{Math.round((1 - probability) * 100)}%</b></div><MetricBar value={1 - probability} tone="violet" /><p>More evidence is requested when the decision boundary is not defensible yet.</p></div><div className="trace-item"><Clock3 size={15} /><div><b>Stop reason</b><span>{answer.stop_reason}</span></div></div><div className="trace-item"><Database size={15} /><div><b>Case memory</b><span>{answer.case.similar_prior_cases.length ? `${answer.case.similar_prior_cases.join(", ")} retrieved` : "No matching closed case retrieved"}</span></div></div></div></section>
-  <section className="action-grid"><ActionPanel title="Before evidence" eyebrow="INITIAL RECOMMENDATION" tone="amber" actions={answer.next_best_actions.initial} /><ActionPanel title="After assumed response" eyebrow="FINAL RECOMMENDATION" tone="green" actions={answer.next_best_actions.final} /><div className="panel sar-panel"><div className="panel-header"><div><div className="eyebrow">REGULATORY ROUTE</div><h2>Suspicious activity report</h2></div><FileCheck2 size={18} className="panel-icon" /></div><div className={`sar-state ${answer.sar.file ? "file" : "no-file"}`}><span>{answer.sar.file ? "FILE REPORT" : "NO REPORT"}</span><b>{answer.sar.file ? "L2 approval" : "Policy threshold not met"}</b></div><p>{answer.sar.reason}</p>{answer.sar.file && <div className="sar-details"><span>Total activity</span><b>{formatMoney(answer.sar.total_amount_usd)}</b><span>Subjects</span><b>{answer.sar.subjects.slice(0, 3).join(" · ")}</b></div>}</div></section></>;
+  <section className="action-grid"><ActionPanel title="Before evidence" eyebrow="INITIAL RECOMMENDATION" tone="amber" actions={answer.next_best_actions.initial} /><ActionPanel title="After assumed response" eyebrow="FINAL RECOMMENDATION" tone="green" actions={answer.next_best_actions.final} /><div className="panel sar-panel"><div className="panel-header"><div><div className="eyebrow">REGULATORY ROUTE</div><h2>Suspicious activity report</h2></div><FileCheck2 size={18} className="panel-icon" /></div><div className={`sar-state ${answer.sar.file ? "file" : "no-file"}`}><span>{answer.sar.file ? "FILE REPORT" : "NO REPORT"}</span><b>{answer.sar.file ? "L2 approval" : "Policy threshold not met"}</b></div><p>{answer.sar.reason}</p>{answer.sar.file && <div className="sar-details"><span>Total activity</span><b>{formatMoney(answer.sar.total_amount_usd)}</b><span>Subjects</span><b>{answer.sar.subjects.slice(0, 3).join(" · ")}</b></div>}</div></section>
+  {answer.agent?.activity_trace && <section className="activity-panel panel"><div className="panel-header"><div><div className="eyebrow"><Activity size={13} /> AGENT ACTIVITY TRACE</div><h2>Investigation run</h2></div><Pill tone={answer.agent.mode === "tigergraph" ? "green" : "amber"}>{answer.agent.mode === "tigergraph" ? "TigerGraph live" : "Demo adapter"}</Pill></div><div className="activity-list">{answer.agent.activity_trace.map((item: any, index: number) => <div className={`activity-row ${item.status}`} key={`${item.step}-${index}`}><span className="activity-check">{item.status === "warning" ? "!" : item.status === "approval" ? "A" : "✓"}</span><div><b>{item.label}</b><span>{item.detail}</span></div><small>{item.source || item.step}</small></div>)}</div><div className="activity-summary"><span>Initial confidence <b>{Math.round((answer.agent.initial_confidence || 0) * 100)}%</b></span><ArrowRight size={14} /><span>Final confidence <b>{Math.round((answer.agent.final_confidence || 0) * 100)}%</b></span><span className="activity-change">{answer.agent.changed_recommendation}</span></div></section>}
+  </>;
 }
 
 function ActionPanel({ title, eyebrow, tone, actions }: { title: string; eyebrow: string; tone: string; actions: { action: string; route: string; reason: string }[] }) { return <div className="panel action-panel"><div className="panel-header"><div><div className="eyebrow">{eyebrow}</div><h2>{title}</h2></div><Pill tone={tone}>{actions.length} action{actions.length === 1 ? "" : "s"}</Pill></div><div className="actions-list">{actions.map((item) => <div className="action-item" key={item.action}><div className={`action-mark ${tone}`}><Shield size={14} /></div><div><div className="action-title"><b>{item.action}</b><span>{item.route}</span></div><p>{item.reason}</p></div></div>)}</div></div>; }

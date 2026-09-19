@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "./activity-trace.css";
 @custom-variant dark (&:is(.dark *));
 
 :root{--bg:#08111d;--bg-deep:#050b13;--panel:#0c1826;--panel-hi:#102033;--line:#1d3448;--line-soft:rgba(137,188,218,.12);--text:#eef7fb;--muted:#8da6b9;--dim:#557287;--cyan:#55dcfa;--violet:#a88bff;--amber:#f4bf5e;--red:#ff718c;--green:#61d7a2;--radius:14px}
