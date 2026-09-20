@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-20T06:46:56.512Z",
+  "generated_at": "2026-09-20T06:58:54.527Z",
   "cases": 20,
   "runtime_mode": "demo_adapter",
   "llm_enabled": false,
@@ -18,6 +18,11 @@
   "action_match_rate": 0.85,
   "approval_route_match_rate": 0.8,
   "grounded_explanation_rate": 1,
+  "evidence_request_rate": 0.3,
+  "tool_selection_rate": 1,
+  "early_stop_rate": 0.25,
+  "memory_influence_rate": 1,
+  "failure_count": 0,
   "failures": [],
   "rows": [
     {
@@ -43,14 +48,14 @@
       "sar_required": false,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-001-MU9GEAJT",
+        "reference": "demo-writeback:CASE-HHG-001-MU9GTOKI",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 21,
+      "trace_steps": 22,
       "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
       "reference_verdict": "uncertain",
       "reference_pattern": "out_of_region_use",
@@ -60,7 +65,14 @@
       "pattern_match": true,
       "action_match": true,
       "route_match": true,
-      "grounded_explanation": true
+      "grounded_explanation": true,
+      "selected_tools": [
+        "Agent selected get_connected_entities",
+        "Agent selected investigate_device"
+      ],
+      "early_stop": false,
+      "memory_influenced": true,
+      "investigation_failed": false
     },
     {
       "case_id": "HHG-002",
@@ -80,14 +92,14 @@
       "sar_required": false,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-002-MU9GEAJV",
+        "reference": "demo-writeback:CASE-HHG-002-MU9GTOKM",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 17,
+      "trace_steps": 18,
       "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
       "reference_verdict": "uncertain",
       "reference_pattern": "card_not_present_fraud",
@@ -97,7 +109,14 @@
       "pattern_match": true,
       "action_match": true,
       "route_match": true,
-      "grounded_explanation": true
+      "grounded_explanation": true,
+      "selected_tools": [
+        "Agent selected get_connected_entities",
+        "Agent selected investigate_device"
+      ],
+      "early_stop": true,
+      "memory_influenced": true,
+      "investigation_failed": false
     },
     {
       "case_id": "HHG-003",
@@ -117,14 +136,14 @@
       "sar_required": false,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-003-MU9GEAJX",
+        "reference": "demo-writeback:CASE-HHG-003-MU9GTOKO",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 17,
+      "trace_steps": 18,
       "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
       "reference_verdict": "uncertain",
       "reference_pattern": "out_of_region_use",
@@ -134,7 +153,14 @@
       "pattern_match": true,
       "action_match": true,
       "route_match": true,
-      "grounded_explanation": true
+      "grounded_explanation": true,
+      "selected_tools": [
+        "Agent selected get_connected_entities",
+        "Agent selected investigate_device"
+      ],
+      "early_stop": false,
+      "memory_influenced": true,
+      "investigation_failed": false
     },
     {
       "case_id": "HHG-004",
@@ -154,14 +180,14 @@
       "sar_required": true,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-004-MU9GEAJZ",
+        "reference": "demo-writeback:CASE-HHG-004-MU9GTOKP",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 17,
+      "trace_steps": 18,
       "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
       "reference_verdict": "fraud",
       "reference_pattern": "card_testing",
@@ -171,7 +197,14 @@
       "pattern_match": true,
       "action_match": true,
       "route_match": true,
-      "grounded_explanation": true
+      "grounded_explanation": true,
+      "selected_tools": [
+        "Agent selected get_connected_entities",
+        "Agent selected investigate_device"
+      ],
+      "early_stop": false,
+      "memory_influenced": true,
+      "investigation_failed": false
     },
     {
       "case_id": "HHG-005",
@@ -196,14 +229,14 @@
       "sar_required": false,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-005-MU9GEAK0",
+        "reference": "demo-writeback:CASE-HHG-005-MU9GTOKQ",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 21,
+      "trace_steps": 22,
       "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
       "reference_verdict": "uncertain",
       "reference_pattern": "card_not_present_new_device",
@@ -213,7 +246,14 @@
       "pattern_match": true,
       "action_match": true,
       "route_match": true,
-      "grounded_explanation": true
+      "grounded_explanation": true,
+      "selected_tools": [
+        "Agent selected get_connected_entities",
+        "Agent selected investigate_device"
+      ],
+      "early_stop": false,
+      "memory_influenced": true,
+      "investigation_failed": false
     },
     {
       "case_id": "HHG-006",
@@ -233,14 +273,14 @@
       "sar_required": false,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-006-MU9GEAK1",
+        "reference": "demo-writeback:CASE-HHG-006-MU9GTOKS",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 17,
+      "trace_steps": 18,
       "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
       "reference_verdict": "uncertain",
       "reference_pattern": "card_not_present_new_device",
@@ -250,7 +290,14 @@
       "pattern_match": true,
       "action_match": true,
       "route_match": true,
-      "grounded_explanation": true
+      "grounded_explanation": true,
+      "selected_tools": [
+        "Agent selected get_connected_entities",
+        "Agent selected investigate_device"
+      ],
+      "early_stop": false,
+      "memory_influenced": true,
+      "investigation_failed": false
     },
     {
       "case_id": "HHG-007",
@@ -270,14 +317,14 @@
       "sar_required": false,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-007-MU9GEAK2",
+        "reference": "demo-writeback:CASE-HHG-007-MU9GTOKU",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 17,
+      "trace_steps": 18,
       "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
       "reference_verdict": "uncertain",
       "reference_pattern": "out_of_region_use",
@@ -287,7 +334,14 @@
       "pattern_match": true,
       "action_match": true,
       "route_match": true,
-      "grounded_explanation": true
+      "grounded_explanation": true,
+      "selected_tools": [
+        "Agent selected get_connected_entities",
+        "Agent selected investigate_device"
+      ],
+      "early_stop": true,
+      "memory_influenced": true,
+      "investigation_failed": false
     },
     {
       "case_id": "HHG-008",
@@ -307,14 +361,14 @@
       "sar_required": false,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-008-MU9GEAK4",
+        "reference": "demo-writeback:CASE-HHG-008-MU9GTOKV",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 17,
+      "trace_steps": 18,
       "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
       "reference_verdict": "uncertain",
       "reference_pattern": "card_testing",
@@ -324,7 +378,14 @@
       "pattern_match": true,
       "action_match": false,
       "route_match": false,
-      "grounded_explanation": true
+      "grounded_explanation": true,
+      "selected_tools": [
+        "Agent selected get_connected_entities",
+        "Agent selected investigate_device"
+      ],
+      "early_stop": true,
+      "memory_influenced": true,
+      "investigation_failed": false
     },
     {
       "case_id": "HHG-009",
@@ -344,14 +405,14 @@
       "sar_required": false,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-009-MU9GEAK5",
+        "reference": "demo-writeback:CASE-HHG-009-MU9GTOKY",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 17,
+      "trace_steps": 18,
       "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
       "reference_verdict": "uncertain",
       "reference_pattern": "card_not_present_fraud",
@@ -361,7 +422,14 @@
       "pattern_match": true,
       "action_match": false,
       "route_match": false,
-      "grounded_explanation": true
+      "grounded_explanation": true,
+      "selected_tools": [
+        "Agent selected get_connected_entities",
+        "Agent selected investigate_device"
+      ],
+      "early_stop": true,
+      "memory_influenced": true,
+      "investigation_failed": false
     },
     {
       "case_id": "HHG-010",
@@ -381,14 +449,14 @@
       "sar_required": true,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-010-MU9GEAK7",
+        "reference": "demo-writeback:CASE-HHG-010-MU9GTOKZ",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 17,
+      "trace_steps": 18,
       "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
       "reference_verdict": "fraud",
       "reference_pattern": "card_not_present_new_device",
@@ -398,7 +466,14 @@
       "pattern_match": true,
       "action_match": true,
       "route_match": true,
-      "grounded_explanation": true
+      "grounded_explanation": true,
+      "selected_tools": [
+        "Agent selected get_connected_entities",
+        "Agent selected investigate_device"
+      ],
+      "early_stop": false,
+      "memory_influenced": true,
+      "investigation_failed": false
     },
     {
       "case_id": "HHG-011",
@@ -418,14 +493,14 @@
       "sar_required": true,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-011-MU9GEAK8",
+        "reference": "demo-writeback:CASE-HHG-011-MU9GTOL1",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 17,
+      "trace_steps": 18,
       "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
       "reference_verdict": "fraud",
       "reference_pattern": "card_testing",
@@ -435,7 +510,14 @@
       "pattern_match": true,
       "action_match": true,
       "route_match": true,
-      "grounded_explanation": true
+      "grounded_explanation": true,
+      "selected_tools": [
+        "Agent selected get_connected_entities",
+        "Agent selected investigate_device"
+      ],
+      "early_stop": false,
+      "memory_influenced": true,
+      "investigation_failed": false
     },
     {
       "case_id": "HHG-012",
@@ -460,14 +542,14 @@
       "sar_required": false,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-012-MU9GEAK9",
+        "reference": "demo-writeback:CASE-HHG-012-MU9GTOL2",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 21,
+      "trace_steps": 22,
       "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
       "reference_verdict": "uncertain",
       "reference_pattern": "card_testing",
@@ -477,7 +559,14 @@
       "pattern_match": true,
       "action_match": true,
       "route_match": true,
-      "grounded_explanation": true
+      "grounded_explanation": true,
+      "selected_tools": [
+        "Agent selected get_connected_entities",
+        "Agent selected investigate_device"
+      ],
+      "early_stop": false,
+      "memory_influenced": true,
+      "investigation_failed": false
     },
     {
       "case_id": "HHG-013",
@@ -497,14 +586,14 @@
       "sar_required": false,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-013-MU9GEAK9",
+        "reference": "demo-writeback:CASE-HHG-013-MU9GTOL3",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 17,
+      "trace_steps": 18,
       "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
       "reference_verdict": "uncertain",
       "reference_pattern": "card_not_present_new_device",
@@ -514,7 +603,14 @@
       "pattern_match": true,
       "action_match": true,
       "route_match": true,
-      "grounded_explanation": true
+      "grounded_explanation": true,
+      "selected_tools": [
+        "Agent selected get_connected_entities",
+        "Agent selected investigate_device"
+      ],
+      "early_stop": true,
+      "memory_influenced": true,
+      "investigation_failed": false
     },
     {
       "case_id": "HHG-014",
@@ -539,14 +635,14 @@
       "sar_required": false,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-014-MU9GEAKA",
+        "reference": "demo-writeback:CASE-HHG-014-MU9GTOL4",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 21,
+      "trace_steps": 22,
       "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
       "reference_verdict": "uncertain",
       "reference_pattern": "card_not_present_new_device",
@@ -556,7 +652,14 @@
       "pattern_match": true,
       "action_match": true,
       "route_match": true,
-      "grounded_explanation": true
+      "grounded_explanation": true,
+      "selected_tools": [
+        "Agent selected get_connected_entities",
+        "Agent selected investigate_device"
+      ],
+      "early_stop": false,
+      "memory_influenced": true,
+      "investigation_failed": false
     },
     {
       "case_id": "HHG-015",
@@ -576,14 +679,14 @@
       "sar_required": false,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-015-MU9GEAKB",
+        "reference": "demo-writeback:CASE-HHG-015-MU9GTOL5",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 17,
+      "trace_steps": 18,
       "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
       "reference_verdict": "uncertain",
       "reference_pattern": "card_not_present_new_device",
@@ -593,7 +696,14 @@
       "pattern_match": true,
       "action_match": false,
       "route_match": false,
-      "grounded_explanation": true
+      "grounded_explanation": true,
+      "selected_tools": [
+        "Agent selected get_connected_entities",
+        "Agent selected investigate_device"
+      ],
+      "early_stop": false,
+      "memory_influenced": true,
+      "investigation_failed": false
     },
     {
       "case_id": "HHG-016",
@@ -613,14 +723,14 @@
       "sar_required": true,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-016-MU9GEAKC",
+        "reference": "demo-writeback:CASE-HHG-016-MU9GTOL6",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 17,
+      "trace_steps": 18,
       "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
       "reference_verdict": "fraud",
       "reference_pattern": "card_not_present_new_device",
@@ -630,7 +740,14 @@
       "pattern_match": true,
       "action_match": true,
       "route_match": true,
-      "grounded_explanation": true
+      "grounded_explanation": true,
+      "selected_tools": [
+        "Agent selected get_connected_entities",
+        "Agent selected investigate_device"
+      ],
+      "early_stop": false,
+      "memory_influenced": true,
+      "investigation_failed": false
     },
     {
       "case_id": "HHG-017",
@@ -655,14 +772,14 @@
       "sar_required": false,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-017-MU9GEAKD",
+        "reference": "demo-writeback:CASE-HHG-017-MU9GTOL7",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 21,
+      "trace_steps": 22,
       "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
       "reference_verdict": "uncertain",
       "reference_pattern": "card_not_present_fraud",
@@ -672,7 +789,14 @@
       "pattern_match": true,
       "action_match": true,
       "route_match": true,
-      "grounded_explanation": true
+      "grounded_explanation": true,
+      "selected_tools": [
+        "Agent selected get_connected_entities",
+        "Agent selected investigate_device"
+      ],
+      "early_stop": false,
+      "memory_influenced": true,
+      "investigation_failed": false
     },
     {
       "case_id": "HHG-018",
@@ -692,14 +816,14 @@
       "sar_required": true,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-018-MU9GEAKE",
+        "reference": "demo-writeback:CASE-HHG-018-MU9GTOL9",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 17,
+      "trace_steps": 18,
       "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
       "reference_verdict": "fraud",
       "reference_pattern": "out_of_region_use",
@@ -709,7 +833,14 @@
       "pattern_match": true,
       "action_match": true,
       "route_match": false,
-      "grounded_explanation": true
+      "grounded_explanation": true,
+      "selected_tools": [
+        "Agent selected get_connected_entities",
+        "Agent selected investigate_device"
+      ],
+      "early_stop": false,
+      "memory_influenced": true,
+      "investigation_failed": false
     },
     {
       "case_id": "HHG-019",
@@ -729,14 +860,14 @@
       "sar_required": true,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-019-MU9GEAKF",
+        "reference": "demo-writeback:CASE-HHG-019-MU9GTOLA",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 17,
+      "trace_steps": 18,
       "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
       "reference_verdict": "fraud",
       "reference_pattern": "card_not_present_new_device",
@@ -746,7 +877,14 @@
       "pattern_match": true,
       "action_match": true,
       "route_match": true,
-      "grounded_explanation": true
+      "grounded_explanation": true,
+      "selected_tools": [
+        "Agent selected get_connected_entities",
+        "Agent selected investigate_device"
+      ],
+      "early_stop": false,
+      "memory_influenced": true,
+      "investigation_failed": false
     },
     {
       "case_id": "HHG-020",
@@ -771,14 +909,14 @@
       "sar_required": false,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-020-MU9GEAKG",
+        "reference": "demo-writeback:CASE-HHG-020-MU9GTOLB",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 21,
+      "trace_steps": 22,
       "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
       "reference_verdict": "uncertain",
       "reference_pattern": "card_not_present_new_device",
@@ -788,7 +926,14 @@
       "pattern_match": true,
       "action_match": true,
       "route_match": true,
-      "grounded_explanation": true
+      "grounded_explanation": true,
+      "selected_tools": [
+        "Agent selected get_connected_entities",
+        "Agent selected investigate_device"
+      ],
+      "early_stop": false,
+      "memory_influenced": true,
+      "investigation_failed": false
     }
   ]
 }

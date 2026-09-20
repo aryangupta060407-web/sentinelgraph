@@ -1,6 +1,6 @@
 # Agentic benchmark evaluation
 
-Generated: 2026-09-20T06:46:56.512Z
+Generated: 2026-09-20T06:58:54.527Z
 Cases evaluated: 20
 Runtime mode: demo_adapter
 LLM reasoning enabled in run: false
@@ -34,7 +34,12 @@ LLM reasoning enabled in run: false
 - Pattern match rate vs preserved reference: 100%
 - Final action match rate vs preserved reference: 85%
 - Approval-route match rate vs preserved reference: 80%
+- Evidence-request rate: 30%
+- Agent tool-selection rate: 100%
+- Early-stop rate: 25%
+- Historical-memory influence rate: 100%
 - Grounded explanation rate: 100%
+- Investigation failures: 0
 
 ## Run interpretation
 

@@ -9,6 +9,7 @@ CREATE VERTEX IPAddress(PRIMARY_ID ip_id STRING, reputation STRING) WITH primary
 CREATE VERTEX Merchant(PRIMARY_ID merchant_id STRING, category STRING, region STRING) WITH primary_id_as_attribute="true"
 CREATE VERTEX EmailDomain(PRIMARY_ID domain STRING) WITH primary_id_as_attribute="true"
 CREATE VERTEX BillingRegion(PRIMARY_ID region STRING) WITH primary_id_as_attribute="true"
+CREATE VERTEX FraudPattern(PRIMARY_ID pattern STRING, definition STRING, version STRING) WITH primary_id_as_attribute="true"
 CREATE VERTEX ClosedCase(PRIMARY_ID case_id STRING, outcome STRING, pattern STRING, exposure_usd FLOAT, analyst_decision STRING, action_taken STRING, action_succeeded BOOL, evidence_summary STRING, relevant_entities STRING) WITH primary_id_as_attribute="true"
 CREATE VERTEX InvestigationCase(PRIMARY_ID case_id STRING, status STRING, verdict STRING, fraud_probability FLOAT, pattern STRING, exposure_usd FLOAT, summary STRING, approval_route STRING, selected_action STRING, action_status STRING, stop_reason STRING, evidence_summary STRING, findings STRING, memory_summary STRING, updated_at DATETIME) WITH primary_id_as_attribute="true"
 CREATE VERTEX Evidence(PRIMARY_ID evidence_id STRING, source STRING, query_name STRING, claim STRING, facts STRING, strength STRING, created_at DATETIME) WITH primary_id_as_attribute="true"
@@ -27,6 +28,7 @@ CREATE DIRECTED EDGE SOLD_BY(FROM Merchant, TO Transaction)
 CREATE DIRECTED EDGE TO_MERCHANT(FROM Transaction, TO Merchant)
 CREATE DIRECTED EDGE PURCHASER_EMAIL(FROM Transaction, TO EmailDomain)
 CREATE DIRECTED EDGE BILLED_IN(FROM Transaction, TO BillingRegion)
+CREATE DIRECTED EDGE MATCHES_PATTERN(FROM Transaction, TO FraudPattern)
 CREATE DIRECTED EDGE NEXT(FROM Transaction, TO Transaction)
 CREATE DIRECTED EDGE INVOLVES(FROM ClosedCase, TO Transaction)
 CREATE DIRECTED EDGE ON_CARD(FROM ClosedCase, TO Card)
@@ -38,6 +40,11 @@ CREATE DIRECTED EDGE CASE_CONNECTED_TO(FROM InvestigationCase, TO Card)
 CREATE DIRECTED EDGE CASE_EVIDENCE(FROM InvestigationCase, TO Evidence)
 CREATE DIRECTED EDGE CASE_EVENT(FROM InvestigationCase, TO CaseEvent)
 CREATE DIRECTED EDGE APPLIES_POLICY(FROM InvestigationCase, TO PolicyRule)
+
+/* Seed FraudPattern from the HHGOA pattern library: card_testing,
+   card_not_present_fraud, card_not_present_new_device, out_of_region_use,
+   and account_takeover. Keep `undocumented` as a valid analyst-defined
+   pattern. Connect matched transactions with MATCHES_PATTERN. */
 
 CREATE QUERY transaction_context(STRING transaction_id) FOR GRAPH FraudGraph {
   Start = {Transaction.*};
@@ -66,17 +73,29 @@ CREATE QUERY device_investigation(STRING transaction_id) FOR GRAPH FraudGraph {
 
 CREATE QUERY similar_cases(STRING customer_id, STRING pattern) FOR GRAPH FraudGraph {
   Start = {Customer.*};
-  Result = SELECT cc FROM Start:c -(OWNS|HAS_ACCOUNT:e)- :linked -(CARD_ON_CASE|CARD_CONNECTED_CASE:e2)- :cc WHERE c.customer_id == customer_id;
+  Result = SELECT cc FROM Start:c -(OWNS|HAS_ACCOUNT:e)- :linked -(CARD_ON_CASE|CARD_CONNECTED_CASE:e2)- :cc WHERE c.customer_id == customer_id AND (pattern == "" OR cc.pattern == pattern);
   PRINT Result;
 }
 
 CREATE QUERY fraud_pattern_detection(STRING transaction_id) FOR GRAPH FraudGraph {
   Start = {Transaction.*};
-  Result = SELECT n FROM Start:t -(FROM_DEVICE|FROM_IP|TO_MERCHANT|NEXT:e)- :n WHERE t.transaction_id == transaction_id;
+  Result = SELECT p FROM Start:t -(MATCHES_PATTERN:e)- :p WHERE t.transaction_id == transaction_id;
   PRINT Result;
 }
 
-CREATE QUERY write_case(STRING case_id, STRING status, STRING verdict, FLOAT probability, STRING pattern, FLOAT exposure, STRING summary, STRING approval_route, STRING selected_action, STRING action_status, STRING stop_reason, STRING evidence_summary, STRING findings, STRING memory_summary, DATETIME updated_at) FOR GRAPH FraudGraph {
+CREATE QUERY write_case(STRING case_id, STRING status, STRING verdict, FLOAT probability, STRING pattern, FLOAT exposure, STRING summary, STRING approval_route, STRING selected_action, STRING action_status, STRING stop_reason, STRING evidence_summary, STRING findings, STRING memory_summary, DATETIME updated_at, STRING transaction_id, STRING card_id, STRING evidence_id, STRING evidence_source, STRING evidence_query, STRING evidence_claim, STRING evidence_facts, STRING evidence_strength, STRING event_id, STRING event_step, STRING event_status, STRING event_detail, STRING policy_id, STRING policy_text) FOR GRAPH FraudGraph {
   INSERT INTO InvestigationCase VALUES(case_id, status, verdict, probability, pattern, exposure, summary, approval_route, selected_action, action_status, stop_reason, evidence_summary, findings, memory_summary, updated_at);
+  INSERT INTO Evidence VALUES(evidence_id, evidence_source, evidence_query, evidence_claim, evidence_facts, evidence_strength, updated_at);
+  INSERT INTO CASE_EVIDENCE VALUES(case_id, evidence_id);
+  INSERT INTO CaseEvent VALUES(event_id, "case_writeback", action_status, event_detail, evidence_source, updated_at);
+  INSERT INTO CASE_EVENT VALUES(case_id, event_id);
+  INSERT INTO PolicyRule VALUES(policy_id, selected_action, approval_route, policy_text);
+  INSERT INTO APPLIES_POLICY VALUES(case_id, policy_id);
+  IF transaction_id != "" THEN
+    INSERT INTO CASE_INVOLVES VALUES(case_id, transaction_id);
+  END;
+  IF card_id != "" THEN
+    INSERT INTO CASE_CONNECTED_TO VALUES(case_id, card_id);
+  END;
   PRINT case_id;
 }

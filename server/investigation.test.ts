@@ -12,6 +12,10 @@ describe("agentic investigation workflow", () => {
     expect(result.agent.activity_trace.map((x: any) => x.step)).toContain("memory_retrieval");
     expect(result.agent.activity_trace.some((x: any) => x.step === "tool_selected")).toBe(true);
     expect(result.agent.evidence.every((item: any) => item.facts && typeof item.facts === "object")).toBe(true);
+    expect(result.agent.transaction_id).toBe("3583227");
+    expect(result.agent.customer_id).toBe("C08106");
+    expect(result.agent.stop_reason).toBeTruthy();
+    expect(result.agent.memory_influenced).toBe(true);
   });
 
   it("requests evidence for an uncertain benchmark case and reassesses", async () => {
@@ -19,6 +23,10 @@ describe("agentic investigation workflow", () => {
     expect(result.agent.requested_evidence.length).toBeGreaterThanOrEqual(0);
     expect(result.agent.final_confidence).toBeGreaterThan(0);
     expect(result.next_best_actions.what_changed).toBeTruthy();
+    if (result.agent.requested_evidence.length) {
+      expect(result.agent.returned_evidence[0].simulated).toBe(true);
+      expect(result.agent.returned_evidence[0].source).toBe("demo_evidence_provider");
+    }
   });
 
   it("keeps protected actions approval-gated and does not fake write-back", async () => {
@@ -41,5 +49,13 @@ describe("agentic investigation workflow", () => {
     const result = await investigateCase("HHG-002", "risk_score");
     expect(result.agent.llm_enabled).toBe(false);
     expect(result.agent.activity_trace.some((x: any) => x.step === "llm_fallback")).toBe(true);
+  });
+
+  it("reports a TigerGraph outage without claiming a successful write", async () => {
+    process.env.TIGERGRAPH_HOST = "http://127.0.0.1:1";
+    const result = await investigateCase("HHG-003", "risk_score");
+    expect(result.agent.mode).toBe("tigergraph_restpp");
+    expect(result.agent.activity_trace.some((x: any) => x.status === "warning")).toBe(true);
+    expect(result.agent.case_writeback.written).toBe(false);
   });
 });

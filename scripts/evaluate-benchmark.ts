@@ -43,6 +43,10 @@ for (const caseId of caseIds) {
     action_match: policy.action === expectedAction,
     route_match: policy.route === expectedRoute,
     grounded_explanation: Boolean((agent.evidence || []).length && agent.reasoning?.explanation),
+    selected_tools: (agent.activity_trace || []).filter((item: any) => item.step === "tool_selected").map((item: any) => item.label),
+    early_stop: (agent.stop_reason || "") === "sufficient evidence",
+    memory_influenced: Boolean(agent.memory_influenced),
+    investigation_failed: (agent.activity_trace || []).some((item: any) => item.status === "error"),
   });
 }
 
@@ -60,12 +64,17 @@ const summary = {
   action_match_rate: rows.filter((row) => row.action_match).length / rows.length,
   approval_route_match_rate: rows.filter((row) => row.route_match).length / rows.length,
   grounded_explanation_rate: rows.filter((row) => row.grounded_explanation).length / rows.length,
+  evidence_request_rate: rows.filter((row) => row.requested_evidence.length > 0).length / rows.length,
+  tool_selection_rate: rows.filter((row) => row.selected_tools.length > 0).length / rows.length,
+  early_stop_rate: rows.filter((row) => row.early_stop).length / rows.length,
+  memory_influence_rate: rows.filter((row) => row.memory_influenced).length / rows.length,
+  failure_count: rows.filter((row) => row.investigation_failed).length,
   failures: rows.filter((row) => !row.grounded_explanation || !row.mode).map((row) => row.case_id),
   rows,
 };
 await fs.writeFile(path.join(outputDir, "benchmark-agentic-evaluation.json"), JSON.stringify(summary, null, 2));
 const lines = ["# Agentic benchmark evaluation", "", `Generated: ${summary.generated_at}`, `Cases evaluated: ${summary.cases}`, `Runtime mode: ${summary.runtime_mode}`, `LLM reasoning enabled in run: ${summary.llm_enabled}`, "", "| Case | Customer | Transaction | Pattern | Verdict | Initial → final confidence | Evidence request | Action | Route | Sources |", "|---|---|---|---|---|---:|---|---|---|---|"];
 for (const row of rows) lines.push(`| ${row.case_id} | ${row.customer_id} | ${row.transaction_id} | ${row.pattern} | ${row.verdict} | ${Math.round(row.initial_confidence * 100)}% → ${Math.round(row.final_confidence * 100)}% | ${row.requested_evidence[0]?.type || "none"} | ${row.final_action} | ${row.approval_route} | ${row.evidence_sources.join(", ")} |`);
-lines.push("", "## Metrics", "", `- Verdict match rate vs preserved reference: ${(summary.verdict_match_rate * 100).toFixed(0)}%`, `- Pattern match rate vs preserved reference: ${(summary.pattern_match_rate * 100).toFixed(0)}%`, `- Final action match rate vs preserved reference: ${(summary.action_match_rate * 100).toFixed(0)}%`, `- Approval-route match rate vs preserved reference: ${(summary.approval_route_match_rate * 100).toFixed(0)}%`, `- Grounded explanation rate: ${(summary.grounded_explanation_rate * 100).toFixed(0)}%`, "", "## Run interpretation", "", "Reference-match metrics are comparisons against the preserved benchmark answer files, not claims of external ground truth. The report separately records bounded evidence, agent recommendation, deterministic approval route, evidence-request behavior, and case write-back result. In demo mode, write-back is intentionally reported as simulated rather than successful. Enable TigerGraph MCP/RESTPP and the LLM provider to produce a live run.");
+lines.push("", "## Metrics", "", `- Verdict match rate vs preserved reference: ${(summary.verdict_match_rate * 100).toFixed(0)}%`, `- Pattern match rate vs preserved reference: ${(summary.pattern_match_rate * 100).toFixed(0)}%`, `- Final action match rate vs preserved reference: ${(summary.action_match_rate * 100).toFixed(0)}%`, `- Approval-route match rate vs preserved reference: ${(summary.approval_route_match_rate * 100).toFixed(0)}%`, `- Evidence-request rate: ${(summary.evidence_request_rate * 100).toFixed(0)}%`, `- Agent tool-selection rate: ${(summary.tool_selection_rate * 100).toFixed(0)}%`, `- Early-stop rate: ${(summary.early_stop_rate * 100).toFixed(0)}%`, `- Historical-memory influence rate: ${(summary.memory_influence_rate * 100).toFixed(0)}%`, `- Grounded explanation rate: ${(summary.grounded_explanation_rate * 100).toFixed(0)}%`, `- Investigation failures: ${summary.failure_count}`, "", "## Run interpretation", "", "Reference-match metrics are comparisons against the preserved benchmark answer files, not claims of external ground truth. The report separately records bounded evidence, agent recommendation, deterministic approval route, evidence-request behavior, and case write-back result. In demo mode, write-back is intentionally reported as simulated rather than successful. Enable TigerGraph MCP/RESTPP and the LLM provider to produce a live run.");
 await fs.writeFile(path.join(outputDir, "benchmark-agentic-evaluation.md"), `${lines.join("\n")}\n`);
 console.log(`Evaluated ${rows.length} cases`);
