@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-20T06:37:44.777Z",
+  "generated_at": "2026-09-20T06:46:56.512Z",
   "cases": 20,
   "runtime_mode": "demo_adapter",
   "llm_enabled": false,
@@ -7,12 +7,18 @@
     "uncertain": 14,
     "fraud": 6
   },
-  "evidence_request_count": 0,
+  "evidence_request_count": 6,
   "approval_routes": {
     "auto": 11,
     "L1": 9
   },
   "graph_writeback_successes": 0,
+  "verdict_match_rate": 1,
+  "pattern_match_rate": 1,
+  "action_match_rate": 0.85,
+  "approval_route_match_rate": 0.8,
+  "grounded_explanation_rate": 1,
+  "failures": [],
   "rows": [
     {
       "case_id": "HHG-001",
@@ -23,24 +29,38 @@
       "pattern": "out_of_region_use",
       "verdict": "uncertain",
       "initial_probability": 0.536,
-      "final_probability": 0.536,
-      "initial_confidence": 0.76092,
-      "final_confidence": 0.76092,
-      "requested_evidence": [],
-      "final_action": "MONITOR_ACCOUNT",
+      "final_probability": 0.43600000000000005,
+      "initial_confidence": 0.68592,
+      "final_confidence": 0.84592,
+      "requested_evidence": [
+        {
+          "type": "STEP_UP_AUTH",
+          "reason": "Conflicting or incomplete identity evidence leaves the decision boundary unresolved; customer verification is the least irreversible next step."
+        }
+      ],
+      "final_action": "STEP_UP_AUTH",
       "approval_route": "auto",
       "sar_required": false,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-001-MU9G2GTQ",
+        "reference": "demo-writeback:CASE-HHG-001-MU9GEAJT",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 14,
-      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+      "trace_steps": 21,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
+      "reference_verdict": "uncertain",
+      "reference_pattern": "out_of_region_use",
+      "reference_action": "STEP_UP_AUTH",
+      "reference_route": "auto",
+      "verdict_match": true,
+      "pattern_match": true,
+      "action_match": true,
+      "route_match": true,
+      "grounded_explanation": true
     },
     {
       "case_id": "HHG-002",
@@ -52,23 +72,32 @@
       "verdict": "uncertain",
       "initial_probability": 0.635,
       "final_probability": 0.635,
-      "initial_confidence": 0.8322,
-      "final_confidence": 0.8322,
+      "initial_confidence": 0.7572,
+      "final_confidence": 0.7572,
       "requested_evidence": [],
       "final_action": "STEP_UP_AUTH",
       "approval_route": "auto",
       "sar_required": false,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-002-MU9G2GTS",
+        "reference": "demo-writeback:CASE-HHG-002-MU9GEAJV",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 14,
-      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+      "trace_steps": 17,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
+      "reference_verdict": "uncertain",
+      "reference_pattern": "card_not_present_fraud",
+      "reference_action": "STEP_UP_AUTH",
+      "reference_route": "auto",
+      "verdict_match": true,
+      "pattern_match": true,
+      "action_match": true,
+      "route_match": true,
+      "grounded_explanation": true
     },
     {
       "case_id": "HHG-003",
@@ -80,23 +109,32 @@
       "verdict": "uncertain",
       "initial_probability": 0.72,
       "final_probability": 0.72,
-      "initial_confidence": 0.8934,
-      "final_confidence": 0.8934,
+      "initial_confidence": 0.8183999999999999,
+      "final_confidence": 0.8183999999999999,
       "requested_evidence": [],
       "final_action": "BLOCK_CARD",
       "approval_route": "L1",
       "sar_required": false,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-003-MU9G2GTU",
+        "reference": "demo-writeback:CASE-HHG-003-MU9GEAJX",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 14,
-      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+      "trace_steps": 17,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
+      "reference_verdict": "uncertain",
+      "reference_pattern": "out_of_region_use",
+      "reference_action": "BLOCK_CARD",
+      "reference_route": "L1",
+      "verdict_match": true,
+      "pattern_match": true,
+      "action_match": true,
+      "route_match": true,
+      "grounded_explanation": true
     },
     {
       "case_id": "HHG-004",
@@ -108,23 +146,32 @@
       "verdict": "fraud",
       "initial_probability": 0.787,
       "final_probability": 0.787,
-      "initial_confidence": 0.94164,
-      "final_confidence": 0.94164,
+      "initial_confidence": 0.86664,
+      "final_confidence": 0.86664,
       "requested_evidence": [],
       "final_action": "BLOCK_CARD",
       "approval_route": "L1",
       "sar_required": true,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-004-MU9G2GTW",
+        "reference": "demo-writeback:CASE-HHG-004-MU9GEAJZ",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 14,
-      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+      "trace_steps": 17,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
+      "reference_verdict": "fraud",
+      "reference_pattern": "card_testing",
+      "reference_action": "BLOCK_CARD",
+      "reference_route": "L1",
+      "verdict_match": true,
+      "pattern_match": true,
+      "action_match": true,
+      "route_match": true,
+      "grounded_explanation": true
     },
     {
       "case_id": "HHG-005",
@@ -135,24 +182,38 @@
       "pattern": "card_not_present_new_device",
       "verdict": "uncertain",
       "initial_probability": 0.597,
-      "final_probability": 0.597,
-      "initial_confidence": 0.80484,
-      "final_confidence": 0.80484,
-      "requested_evidence": [],
+      "final_probability": 0.497,
+      "initial_confidence": 0.7298399999999999,
+      "final_confidence": 0.88984,
+      "requested_evidence": [
+        {
+          "type": "STEP_UP_AUTH",
+          "reason": "Conflicting or incomplete identity evidence leaves the decision boundary unresolved; customer verification is the least irreversible next step."
+        }
+      ],
       "final_action": "STEP_UP_AUTH",
       "approval_route": "auto",
       "sar_required": false,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-005-MU9G2GTX",
+        "reference": "demo-writeback:CASE-HHG-005-MU9GEAK0",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 14,
-      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+      "trace_steps": 21,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
+      "reference_verdict": "uncertain",
+      "reference_pattern": "card_not_present_new_device",
+      "reference_action": "STEP_UP_AUTH",
+      "reference_route": "auto",
+      "verdict_match": true,
+      "pattern_match": true,
+      "action_match": true,
+      "route_match": true,
+      "grounded_explanation": true
     },
     {
       "case_id": "HHG-006",
@@ -164,23 +225,32 @@
       "verdict": "uncertain",
       "initial_probability": 0.738,
       "final_probability": 0.738,
-      "initial_confidence": 0.90636,
-      "final_confidence": 0.90636,
+      "initial_confidence": 0.83136,
+      "final_confidence": 0.83136,
       "requested_evidence": [],
       "final_action": "BLOCK_CARD",
       "approval_route": "L1",
       "sar_required": false,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-006-MU9G2GTY",
+        "reference": "demo-writeback:CASE-HHG-006-MU9GEAK1",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 14,
-      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+      "trace_steps": 17,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
+      "reference_verdict": "uncertain",
+      "reference_pattern": "card_not_present_new_device",
+      "reference_action": "BLOCK_CARD",
+      "reference_route": "L1",
+      "verdict_match": true,
+      "pattern_match": true,
+      "action_match": true,
+      "route_match": true,
+      "grounded_explanation": true
     },
     {
       "case_id": "HHG-007",
@@ -192,23 +262,32 @@
       "verdict": "uncertain",
       "initial_probability": 0.679,
       "final_probability": 0.679,
-      "initial_confidence": 0.86388,
-      "final_confidence": 0.86388,
+      "initial_confidence": 0.78888,
+      "final_confidence": 0.78888,
       "requested_evidence": [],
       "final_action": "STEP_UP_AUTH",
       "approval_route": "auto",
       "sar_required": false,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-007-MU9G2GU0",
+        "reference": "demo-writeback:CASE-HHG-007-MU9GEAK2",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 14,
-      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+      "trace_steps": 17,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
+      "reference_verdict": "uncertain",
+      "reference_pattern": "out_of_region_use",
+      "reference_action": "STEP_UP_AUTH",
+      "reference_route": "auto",
+      "verdict_match": true,
+      "pattern_match": true,
+      "action_match": true,
+      "route_match": true,
+      "grounded_explanation": true
     },
     {
       "case_id": "HHG-008",
@@ -220,23 +299,32 @@
       "verdict": "uncertain",
       "initial_probability": 0.709,
       "final_probability": 0.709,
-      "initial_confidence": 0.88548,
-      "final_confidence": 0.88548,
+      "initial_confidence": 0.81048,
+      "final_confidence": 0.81048,
       "requested_evidence": [],
       "final_action": "STEP_UP_AUTH",
       "approval_route": "auto",
       "sar_required": false,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-008-MU9G2GU1",
+        "reference": "demo-writeback:CASE-HHG-008-MU9GEAK4",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 14,
-      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+      "trace_steps": 17,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
+      "reference_verdict": "uncertain",
+      "reference_pattern": "card_testing",
+      "reference_action": "BLOCK_CARD",
+      "reference_route": "L1",
+      "verdict_match": true,
+      "pattern_match": true,
+      "action_match": false,
+      "route_match": false,
+      "grounded_explanation": true
     },
     {
       "case_id": "HHG-009",
@@ -248,23 +336,32 @@
       "verdict": "uncertain",
       "initial_probability": 0.654,
       "final_probability": 0.654,
-      "initial_confidence": 0.84588,
-      "final_confidence": 0.84588,
+      "initial_confidence": 0.77088,
+      "final_confidence": 0.77088,
       "requested_evidence": [],
       "final_action": "STEP_UP_AUTH",
       "approval_route": "auto",
       "sar_required": false,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-009-MU9G2GU3",
+        "reference": "demo-writeback:CASE-HHG-009-MU9GEAK5",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 14,
-      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+      "trace_steps": 17,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
+      "reference_verdict": "uncertain",
+      "reference_pattern": "card_not_present_fraud",
+      "reference_action": "BLOCK_CARD",
+      "reference_route": "L1",
+      "verdict_match": true,
+      "pattern_match": true,
+      "action_match": false,
+      "route_match": false,
+      "grounded_explanation": true
     },
     {
       "case_id": "HHG-010",
@@ -276,23 +373,32 @@
       "verdict": "fraud",
       "initial_probability": 0.795,
       "final_probability": 0.795,
-      "initial_confidence": 0.9474,
-      "final_confidence": 0.9474,
+      "initial_confidence": 0.8724,
+      "final_confidence": 0.8724,
       "requested_evidence": [],
       "final_action": "BLOCK_CARD",
       "approval_route": "L1",
       "sar_required": true,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-010-MU9G2GU4",
+        "reference": "demo-writeback:CASE-HHG-010-MU9GEAK7",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 14,
-      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+      "trace_steps": 17,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
+      "reference_verdict": "fraud",
+      "reference_pattern": "card_not_present_new_device",
+      "reference_action": "BLOCK_CARD",
+      "reference_route": "L1",
+      "verdict_match": true,
+      "pattern_match": true,
+      "action_match": true,
+      "route_match": true,
+      "grounded_explanation": true
     },
     {
       "case_id": "HHG-011",
@@ -304,23 +410,32 @@
       "verdict": "fraud",
       "initial_probability": 0.815,
       "final_probability": 0.815,
-      "initial_confidence": 0.9618,
-      "final_confidence": 0.9618,
+      "initial_confidence": 0.8867999999999999,
+      "final_confidence": 0.8867999999999999,
       "requested_evidence": [],
       "final_action": "BLOCK_CARD",
       "approval_route": "L1",
       "sar_required": true,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-011-MU9G2GU7",
+        "reference": "demo-writeback:CASE-HHG-011-MU9GEAK8",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 14,
-      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+      "trace_steps": 17,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
+      "reference_verdict": "fraud",
+      "reference_pattern": "card_testing",
+      "reference_action": "BLOCK_CARD",
+      "reference_route": "L1",
+      "verdict_match": true,
+      "pattern_match": true,
+      "action_match": true,
+      "route_match": true,
+      "grounded_explanation": true
     },
     {
       "case_id": "HHG-012",
@@ -331,24 +446,38 @@
       "pattern": "card_testing",
       "verdict": "uncertain",
       "initial_probability": 0.503,
-      "final_probability": 0.503,
-      "initial_confidence": 0.73716,
-      "final_confidence": 0.73716,
-      "requested_evidence": [],
-      "final_action": "MONITOR_ACCOUNT",
+      "final_probability": 0.403,
+      "initial_confidence": 0.66216,
+      "final_confidence": 0.82216,
+      "requested_evidence": [
+        {
+          "type": "STEP_UP_AUTH",
+          "reason": "Conflicting or incomplete identity evidence leaves the decision boundary unresolved; customer verification is the least irreversible next step."
+        }
+      ],
+      "final_action": "STEP_UP_AUTH",
       "approval_route": "auto",
       "sar_required": false,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-012-MU9G2GU8",
+        "reference": "demo-writeback:CASE-HHG-012-MU9GEAK9",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 14,
-      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+      "trace_steps": 21,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
+      "reference_verdict": "uncertain",
+      "reference_pattern": "card_testing",
+      "reference_action": "STEP_UP_AUTH",
+      "reference_route": "auto",
+      "verdict_match": true,
+      "pattern_match": true,
+      "action_match": true,
+      "route_match": true,
+      "grounded_explanation": true
     },
     {
       "case_id": "HHG-013",
@@ -360,23 +489,32 @@
       "verdict": "uncertain",
       "initial_probability": 0.718,
       "final_probability": 0.718,
-      "initial_confidence": 0.8919600000000001,
-      "final_confidence": 0.8919600000000001,
+      "initial_confidence": 0.81696,
+      "final_confidence": 0.81696,
       "requested_evidence": [],
       "final_action": "STEP_UP_AUTH",
       "approval_route": "auto",
       "sar_required": false,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-013-MU9G2GU9",
+        "reference": "demo-writeback:CASE-HHG-013-MU9GEAK9",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 14,
-      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+      "trace_steps": 17,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
+      "reference_verdict": "uncertain",
+      "reference_pattern": "card_not_present_new_device",
+      "reference_action": "STEP_UP_AUTH",
+      "reference_route": "auto",
+      "verdict_match": true,
+      "pattern_match": true,
+      "action_match": true,
+      "route_match": true,
+      "grounded_explanation": true
     },
     {
       "case_id": "HHG-014",
@@ -387,24 +525,38 @@
       "pattern": "card_not_present_new_device",
       "verdict": "uncertain",
       "initial_probability": 0.328,
-      "final_probability": 0.328,
-      "initial_confidence": 0.6111599999999999,
-      "final_confidence": 0.6111599999999999,
-      "requested_evidence": [],
-      "final_action": "MONITOR_ACCOUNT",
+      "final_probability": 0.228,
+      "initial_confidence": 0.53616,
+      "final_confidence": 0.69616,
+      "requested_evidence": [
+        {
+          "type": "STEP_UP_AUTH",
+          "reason": "Conflicting or incomplete identity evidence leaves the decision boundary unresolved; customer verification is the least irreversible next step."
+        }
+      ],
+      "final_action": "STEP_UP_AUTH",
       "approval_route": "auto",
       "sar_required": false,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-014-MU9G2GUA",
+        "reference": "demo-writeback:CASE-HHG-014-MU9GEAKA",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 14,
-      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+      "trace_steps": 21,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
+      "reference_verdict": "uncertain",
+      "reference_pattern": "card_not_present_new_device",
+      "reference_action": "STEP_UP_AUTH",
+      "reference_route": "auto",
+      "verdict_match": true,
+      "pattern_match": true,
+      "action_match": true,
+      "route_match": true,
+      "grounded_explanation": true
     },
     {
       "case_id": "HHG-015",
@@ -416,23 +568,32 @@
       "verdict": "uncertain",
       "initial_probability": 0.724,
       "final_probability": 0.724,
-      "initial_confidence": 0.89628,
-      "final_confidence": 0.89628,
+      "initial_confidence": 0.8212799999999999,
+      "final_confidence": 0.8212799999999999,
       "requested_evidence": [],
       "final_action": "BLOCK_CARD",
       "approval_route": "L1",
       "sar_required": false,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-015-MU9G2GUB",
+        "reference": "demo-writeback:CASE-HHG-015-MU9GEAKB",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 14,
-      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+      "trace_steps": 17,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
+      "reference_verdict": "uncertain",
+      "reference_pattern": "card_not_present_new_device",
+      "reference_action": "STEP_UP_AUTH",
+      "reference_route": "auto",
+      "verdict_match": true,
+      "pattern_match": true,
+      "action_match": false,
+      "route_match": false,
+      "grounded_explanation": true
     },
     {
       "case_id": "HHG-016",
@@ -444,23 +605,32 @@
       "verdict": "fraud",
       "initial_probability": 0.804,
       "final_probability": 0.804,
-      "initial_confidence": 0.9538800000000001,
-      "final_confidence": 0.9538800000000001,
+      "initial_confidence": 0.87888,
+      "final_confidence": 0.87888,
       "requested_evidence": [],
       "final_action": "BLOCK_CARD",
       "approval_route": "L1",
       "sar_required": true,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-016-MU9G2GUC",
+        "reference": "demo-writeback:CASE-HHG-016-MU9GEAKC",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 14,
-      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+      "trace_steps": 17,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
+      "reference_verdict": "fraud",
+      "reference_pattern": "card_not_present_new_device",
+      "reference_action": "BLOCK_CARD",
+      "reference_route": "L1",
+      "verdict_match": true,
+      "pattern_match": true,
+      "action_match": true,
+      "route_match": true,
+      "grounded_explanation": true
     },
     {
       "case_id": "HHG-017",
@@ -471,24 +641,38 @@
       "pattern": "card_not_present_fraud",
       "verdict": "uncertain",
       "initial_probability": 0.514,
-      "final_probability": 0.514,
-      "initial_confidence": 0.74508,
-      "final_confidence": 0.74508,
-      "requested_evidence": [],
-      "final_action": "MONITOR_ACCOUNT",
+      "final_probability": 0.41400000000000003,
+      "initial_confidence": 0.67008,
+      "final_confidence": 0.83008,
+      "requested_evidence": [
+        {
+          "type": "STEP_UP_AUTH",
+          "reason": "Conflicting or incomplete identity evidence leaves the decision boundary unresolved; customer verification is the least irreversible next step."
+        }
+      ],
+      "final_action": "STEP_UP_AUTH",
       "approval_route": "auto",
       "sar_required": false,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-017-MU9G2GUD",
+        "reference": "demo-writeback:CASE-HHG-017-MU9GEAKD",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 14,
-      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+      "trace_steps": 21,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
+      "reference_verdict": "uncertain",
+      "reference_pattern": "card_not_present_fraud",
+      "reference_action": "STEP_UP_AUTH",
+      "reference_route": "auto",
+      "verdict_match": true,
+      "pattern_match": true,
+      "action_match": true,
+      "route_match": true,
+      "grounded_explanation": true
     },
     {
       "case_id": "HHG-018",
@@ -500,23 +684,32 @@
       "verdict": "fraud",
       "initial_probability": 0.764,
       "final_probability": 0.764,
-      "initial_confidence": 0.9250800000000001,
-      "final_confidence": 0.9250800000000001,
+      "initial_confidence": 0.8500800000000001,
+      "final_confidence": 0.8500800000000001,
       "requested_evidence": [],
       "final_action": "BLOCK_CARD",
       "approval_route": "L1",
       "sar_required": true,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-018-MU9G2GUF",
+        "reference": "demo-writeback:CASE-HHG-018-MU9GEAKE",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 14,
-      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+      "trace_steps": 17,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
+      "reference_verdict": "fraud",
+      "reference_pattern": "out_of_region_use",
+      "reference_action": "BLOCK_CARD",
+      "reference_route": "L2",
+      "verdict_match": true,
+      "pattern_match": true,
+      "action_match": true,
+      "route_match": false,
+      "grounded_explanation": true
     },
     {
       "case_id": "HHG-019",
@@ -528,23 +721,32 @@
       "verdict": "fraud",
       "initial_probability": 0.795,
       "final_probability": 0.795,
-      "initial_confidence": 0.9474,
-      "final_confidence": 0.9474,
+      "initial_confidence": 0.8724,
+      "final_confidence": 0.8724,
       "requested_evidence": [],
       "final_action": "BLOCK_CARD",
       "approval_route": "L1",
       "sar_required": true,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-019-MU9G2GUG",
+        "reference": "demo-writeback:CASE-HHG-019-MU9GEAKF",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 14,
-      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+      "trace_steps": 17,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
+      "reference_verdict": "fraud",
+      "reference_pattern": "card_not_present_new_device",
+      "reference_action": "BLOCK_CARD",
+      "reference_route": "L1",
+      "verdict_match": true,
+      "pattern_match": true,
+      "action_match": true,
+      "route_match": true,
+      "grounded_explanation": true
     },
     {
       "case_id": "HHG-020",
@@ -555,24 +757,38 @@
       "pattern": "card_not_present_new_device",
       "verdict": "uncertain",
       "initial_probability": 0.586,
-      "final_probability": 0.586,
-      "initial_confidence": 0.7969200000000001,
-      "final_confidence": 0.7969200000000001,
-      "requested_evidence": [],
+      "final_probability": 0.486,
+      "initial_confidence": 0.72192,
+      "final_confidence": 0.88192,
+      "requested_evidence": [
+        {
+          "type": "STEP_UP_AUTH",
+          "reason": "Conflicting or incomplete identity evidence leaves the decision boundary unresolved; customer verification is the least irreversible next step."
+        }
+      ],
       "final_action": "STEP_UP_AUTH",
       "approval_route": "auto",
       "sar_required": false,
       "graph_writeback": {
         "written": false,
-        "reference": "demo-writeback:CASE-HHG-020-MU9G2GUH",
+        "reference": "demo-writeback:CASE-HHG-020-MU9GEAKG",
         "source": "demo_adapter"
       },
       "evidence_sources": [
         "demo_adapter",
         "case_memory"
       ],
-      "trace_steps": 14,
-      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+      "trace_steps": 21,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated.",
+      "reference_verdict": "uncertain",
+      "reference_pattern": "card_not_present_new_device",
+      "reference_action": "STEP_UP_AUTH",
+      "reference_route": "auto",
+      "verdict_match": true,
+      "pattern_match": true,
+      "action_match": true,
+      "route_match": true,
+      "grounded_explanation": true
     }
   ]
 }
