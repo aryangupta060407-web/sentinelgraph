@@ -20,7 +20,7 @@ async function startServer() {
   app.use(express.static(staticPath));
 
   app.get("/api/health", (_req, res) => {
-    res.json({ ok: true, agent: "sentinelgraph-investigator", graph_mode: process.env.TIGERGRAPH_HOST ? "tigergraph-rest" : "demo-adapter", tigergraph_configured: Boolean(process.env.TIGERGRAPH_HOST), policy_enforced: true });
+    res.json({ ok: true, agent: "sentinelgraph-investigator", graph_mode: process.env.TIGERGRAPH_MCP_URL ? "tigergraph-mcp" : process.env.TIGERGRAPH_HOST ? "tigergraph-restpp" : "demo-adapter", llm_reasoning_enabled: process.env.LLM_REASONING_ENABLED === "true", tigergraph_configured: Boolean(process.env.TIGERGRAPH_HOST || process.env.TIGERGRAPH_MCP_URL), policy_enforced: true });
   });
 
   app.post("/api/investigate", async (req, res) => {

@@ -1,0 +1,578 @@
+{
+  "generated_at": "2026-09-20T06:37:44.777Z",
+  "cases": 20,
+  "runtime_mode": "demo_adapter",
+  "llm_enabled": false,
+  "verdicts": {
+    "uncertain": 14,
+    "fraud": 6
+  },
+  "evidence_request_count": 0,
+  "approval_routes": {
+    "auto": 11,
+    "L1": 9
+  },
+  "graph_writeback_successes": 0,
+  "rows": [
+    {
+      "case_id": "HHG-001",
+      "mode": "demo_adapter",
+      "llm_enabled": false,
+      "customer_id": "C12382",
+      "transaction_id": "3514030",
+      "pattern": "out_of_region_use",
+      "verdict": "uncertain",
+      "initial_probability": 0.536,
+      "final_probability": 0.536,
+      "initial_confidence": 0.76092,
+      "final_confidence": 0.76092,
+      "requested_evidence": [],
+      "final_action": "MONITOR_ACCOUNT",
+      "approval_route": "auto",
+      "sar_required": false,
+      "graph_writeback": {
+        "written": false,
+        "reference": "demo-writeback:CASE-HHG-001-MU9G2GTQ",
+        "source": "demo_adapter"
+      },
+      "evidence_sources": [
+        "demo_adapter",
+        "case_memory"
+      ],
+      "trace_steps": 14,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+    },
+    {
+      "case_id": "HHG-002",
+      "mode": "demo_adapter",
+      "llm_enabled": false,
+      "customer_id": "C11891",
+      "transaction_id": "3478782",
+      "pattern": "card_not_present_fraud",
+      "verdict": "uncertain",
+      "initial_probability": 0.635,
+      "final_probability": 0.635,
+      "initial_confidence": 0.8322,
+      "final_confidence": 0.8322,
+      "requested_evidence": [],
+      "final_action": "STEP_UP_AUTH",
+      "approval_route": "auto",
+      "sar_required": false,
+      "graph_writeback": {
+        "written": false,
+        "reference": "demo-writeback:CASE-HHG-002-MU9G2GTS",
+        "source": "demo_adapter"
+      },
+      "evidence_sources": [
+        "demo_adapter",
+        "case_memory"
+      ],
+      "trace_steps": 14,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+    },
+    {
+      "case_id": "HHG-003",
+      "mode": "demo_adapter",
+      "llm_enabled": false,
+      "customer_id": "C08623",
+      "transaction_id": "3530164",
+      "pattern": "out_of_region_use",
+      "verdict": "uncertain",
+      "initial_probability": 0.72,
+      "final_probability": 0.72,
+      "initial_confidence": 0.8934,
+      "final_confidence": 0.8934,
+      "requested_evidence": [],
+      "final_action": "BLOCK_CARD",
+      "approval_route": "L1",
+      "sar_required": false,
+      "graph_writeback": {
+        "written": false,
+        "reference": "demo-writeback:CASE-HHG-003-MU9G2GTU",
+        "source": "demo_adapter"
+      },
+      "evidence_sources": [
+        "demo_adapter",
+        "case_memory"
+      ],
+      "trace_steps": 14,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+    },
+    {
+      "case_id": "HHG-004",
+      "mode": "demo_adapter",
+      "llm_enabled": false,
+      "customer_id": "C08106",
+      "transaction_id": "3583227",
+      "pattern": "card_testing",
+      "verdict": "fraud",
+      "initial_probability": 0.787,
+      "final_probability": 0.787,
+      "initial_confidence": 0.94164,
+      "final_confidence": 0.94164,
+      "requested_evidence": [],
+      "final_action": "BLOCK_CARD",
+      "approval_route": "L1",
+      "sar_required": true,
+      "graph_writeback": {
+        "written": false,
+        "reference": "demo-writeback:CASE-HHG-004-MU9G2GTW",
+        "source": "demo_adapter"
+      },
+      "evidence_sources": [
+        "demo_adapter",
+        "case_memory"
+      ],
+      "trace_steps": 14,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+    },
+    {
+      "case_id": "HHG-005",
+      "mode": "demo_adapter",
+      "llm_enabled": false,
+      "customer_id": "C02923",
+      "transaction_id": "3523199",
+      "pattern": "card_not_present_new_device",
+      "verdict": "uncertain",
+      "initial_probability": 0.597,
+      "final_probability": 0.597,
+      "initial_confidence": 0.80484,
+      "final_confidence": 0.80484,
+      "requested_evidence": [],
+      "final_action": "STEP_UP_AUTH",
+      "approval_route": "auto",
+      "sar_required": false,
+      "graph_writeback": {
+        "written": false,
+        "reference": "demo-writeback:CASE-HHG-005-MU9G2GTX",
+        "source": "demo_adapter"
+      },
+      "evidence_sources": [
+        "demo_adapter",
+        "case_memory"
+      ],
+      "trace_steps": 14,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+    },
+    {
+      "case_id": "HHG-006",
+      "mode": "demo_adapter",
+      "llm_enabled": false,
+      "customer_id": "C07297",
+      "transaction_id": "3476682",
+      "pattern": "card_not_present_new_device",
+      "verdict": "uncertain",
+      "initial_probability": 0.738,
+      "final_probability": 0.738,
+      "initial_confidence": 0.90636,
+      "final_confidence": 0.90636,
+      "requested_evidence": [],
+      "final_action": "BLOCK_CARD",
+      "approval_route": "L1",
+      "sar_required": false,
+      "graph_writeback": {
+        "written": false,
+        "reference": "demo-writeback:CASE-HHG-006-MU9G2GTY",
+        "source": "demo_adapter"
+      },
+      "evidence_sources": [
+        "demo_adapter",
+        "case_memory"
+      ],
+      "trace_steps": 14,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+    },
+    {
+      "case_id": "HHG-007",
+      "mode": "demo_adapter",
+      "llm_enabled": false,
+      "customer_id": "C09933",
+      "transaction_id": "3514948",
+      "pattern": "out_of_region_use",
+      "verdict": "uncertain",
+      "initial_probability": 0.679,
+      "final_probability": 0.679,
+      "initial_confidence": 0.86388,
+      "final_confidence": 0.86388,
+      "requested_evidence": [],
+      "final_action": "STEP_UP_AUTH",
+      "approval_route": "auto",
+      "sar_required": false,
+      "graph_writeback": {
+        "written": false,
+        "reference": "demo-writeback:CASE-HHG-007-MU9G2GU0",
+        "source": "demo_adapter"
+      },
+      "evidence_sources": [
+        "demo_adapter",
+        "case_memory"
+      ],
+      "trace_steps": 14,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+    },
+    {
+      "case_id": "HHG-008",
+      "mode": "demo_adapter",
+      "llm_enabled": false,
+      "customer_id": "C13171",
+      "transaction_id": "3558054",
+      "pattern": "card_testing",
+      "verdict": "uncertain",
+      "initial_probability": 0.709,
+      "final_probability": 0.709,
+      "initial_confidence": 0.88548,
+      "final_confidence": 0.88548,
+      "requested_evidence": [],
+      "final_action": "STEP_UP_AUTH",
+      "approval_route": "auto",
+      "sar_required": false,
+      "graph_writeback": {
+        "written": false,
+        "reference": "demo-writeback:CASE-HHG-008-MU9G2GU1",
+        "source": "demo_adapter"
+      },
+      "evidence_sources": [
+        "demo_adapter",
+        "case_memory"
+      ],
+      "trace_steps": 14,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+    },
+    {
+      "case_id": "HHG-009",
+      "mode": "demo_adapter",
+      "llm_enabled": false,
+      "customer_id": "C08299",
+      "transaction_id": "3581141",
+      "pattern": "card_not_present_fraud",
+      "verdict": "uncertain",
+      "initial_probability": 0.654,
+      "final_probability": 0.654,
+      "initial_confidence": 0.84588,
+      "final_confidence": 0.84588,
+      "requested_evidence": [],
+      "final_action": "STEP_UP_AUTH",
+      "approval_route": "auto",
+      "sar_required": false,
+      "graph_writeback": {
+        "written": false,
+        "reference": "demo-writeback:CASE-HHG-009-MU9G2GU3",
+        "source": "demo_adapter"
+      },
+      "evidence_sources": [
+        "demo_adapter",
+        "case_memory"
+      ],
+      "trace_steps": 14,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+    },
+    {
+      "case_id": "HHG-010",
+      "mode": "demo_adapter",
+      "llm_enabled": false,
+      "customer_id": "C10434",
+      "transaction_id": "3506725",
+      "pattern": "card_not_present_new_device",
+      "verdict": "fraud",
+      "initial_probability": 0.795,
+      "final_probability": 0.795,
+      "initial_confidence": 0.9474,
+      "final_confidence": 0.9474,
+      "requested_evidence": [],
+      "final_action": "BLOCK_CARD",
+      "approval_route": "L1",
+      "sar_required": true,
+      "graph_writeback": {
+        "written": false,
+        "reference": "demo-writeback:CASE-HHG-010-MU9G2GU4",
+        "source": "demo_adapter"
+      },
+      "evidence_sources": [
+        "demo_adapter",
+        "case_memory"
+      ],
+      "trace_steps": 14,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+    },
+    {
+      "case_id": "HHG-011",
+      "mode": "demo_adapter",
+      "llm_enabled": false,
+      "customer_id": "C11923",
+      "transaction_id": "3583368",
+      "pattern": "card_testing",
+      "verdict": "fraud",
+      "initial_probability": 0.815,
+      "final_probability": 0.815,
+      "initial_confidence": 0.9618,
+      "final_confidence": 0.9618,
+      "requested_evidence": [],
+      "final_action": "BLOCK_CARD",
+      "approval_route": "L1",
+      "sar_required": true,
+      "graph_writeback": {
+        "written": false,
+        "reference": "demo-writeback:CASE-HHG-011-MU9G2GU7",
+        "source": "demo_adapter"
+      },
+      "evidence_sources": [
+        "demo_adapter",
+        "case_memory"
+      ],
+      "trace_steps": 14,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+    },
+    {
+      "case_id": "HHG-012",
+      "mode": "demo_adapter",
+      "llm_enabled": false,
+      "customer_id": "C05876",
+      "transaction_id": "3553342",
+      "pattern": "card_testing",
+      "verdict": "uncertain",
+      "initial_probability": 0.503,
+      "final_probability": 0.503,
+      "initial_confidence": 0.73716,
+      "final_confidence": 0.73716,
+      "requested_evidence": [],
+      "final_action": "MONITOR_ACCOUNT",
+      "approval_route": "auto",
+      "sar_required": false,
+      "graph_writeback": {
+        "written": false,
+        "reference": "demo-writeback:CASE-HHG-012-MU9G2GU8",
+        "source": "demo_adapter"
+      },
+      "evidence_sources": [
+        "demo_adapter",
+        "case_memory"
+      ],
+      "trace_steps": 14,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+    },
+    {
+      "case_id": "HHG-013",
+      "mode": "demo_adapter",
+      "llm_enabled": false,
+      "customer_id": "C07671",
+      "transaction_id": "3526826",
+      "pattern": "card_not_present_new_device",
+      "verdict": "uncertain",
+      "initial_probability": 0.718,
+      "final_probability": 0.718,
+      "initial_confidence": 0.8919600000000001,
+      "final_confidence": 0.8919600000000001,
+      "requested_evidence": [],
+      "final_action": "STEP_UP_AUTH",
+      "approval_route": "auto",
+      "sar_required": false,
+      "graph_writeback": {
+        "written": false,
+        "reference": "demo-writeback:CASE-HHG-013-MU9G2GU9",
+        "source": "demo_adapter"
+      },
+      "evidence_sources": [
+        "demo_adapter",
+        "case_memory"
+      ],
+      "trace_steps": 14,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+    },
+    {
+      "case_id": "HHG-014",
+      "mode": "demo_adapter",
+      "llm_enabled": false,
+      "customer_id": "C13487",
+      "transaction_id": "3478561",
+      "pattern": "card_not_present_new_device",
+      "verdict": "uncertain",
+      "initial_probability": 0.328,
+      "final_probability": 0.328,
+      "initial_confidence": 0.6111599999999999,
+      "final_confidence": 0.6111599999999999,
+      "requested_evidence": [],
+      "final_action": "MONITOR_ACCOUNT",
+      "approval_route": "auto",
+      "sar_required": false,
+      "graph_writeback": {
+        "written": false,
+        "reference": "demo-writeback:CASE-HHG-014-MU9G2GUA",
+        "source": "demo_adapter"
+      },
+      "evidence_sources": [
+        "demo_adapter",
+        "case_memory"
+      ],
+      "trace_steps": 14,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+    },
+    {
+      "case_id": "HHG-015",
+      "mode": "demo_adapter",
+      "llm_enabled": false,
+      "customer_id": "C03042",
+      "transaction_id": "3464869",
+      "pattern": "card_not_present_new_device",
+      "verdict": "uncertain",
+      "initial_probability": 0.724,
+      "final_probability": 0.724,
+      "initial_confidence": 0.89628,
+      "final_confidence": 0.89628,
+      "requested_evidence": [],
+      "final_action": "BLOCK_CARD",
+      "approval_route": "L1",
+      "sar_required": false,
+      "graph_writeback": {
+        "written": false,
+        "reference": "demo-writeback:CASE-HHG-015-MU9G2GUB",
+        "source": "demo_adapter"
+      },
+      "evidence_sources": [
+        "demo_adapter",
+        "case_memory"
+      ],
+      "trace_steps": 14,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+    },
+    {
+      "case_id": "HHG-016",
+      "mode": "demo_adapter",
+      "llm_enabled": false,
+      "customer_id": "C09988",
+      "transaction_id": "3534820",
+      "pattern": "card_not_present_new_device",
+      "verdict": "fraud",
+      "initial_probability": 0.804,
+      "final_probability": 0.804,
+      "initial_confidence": 0.9538800000000001,
+      "final_confidence": 0.9538800000000001,
+      "requested_evidence": [],
+      "final_action": "BLOCK_CARD",
+      "approval_route": "L1",
+      "sar_required": true,
+      "graph_writeback": {
+        "written": false,
+        "reference": "demo-writeback:CASE-HHG-016-MU9G2GUC",
+        "source": "demo_adapter"
+      },
+      "evidence_sources": [
+        "demo_adapter",
+        "case_memory"
+      ],
+      "trace_steps": 14,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+    },
+    {
+      "case_id": "HHG-017",
+      "mode": "demo_adapter",
+      "llm_enabled": false,
+      "customer_id": "C04570",
+      "transaction_id": "3450629",
+      "pattern": "card_not_present_fraud",
+      "verdict": "uncertain",
+      "initial_probability": 0.514,
+      "final_probability": 0.514,
+      "initial_confidence": 0.74508,
+      "final_confidence": 0.74508,
+      "requested_evidence": [],
+      "final_action": "MONITOR_ACCOUNT",
+      "approval_route": "auto",
+      "sar_required": false,
+      "graph_writeback": {
+        "written": false,
+        "reference": "demo-writeback:CASE-HHG-017-MU9G2GUD",
+        "source": "demo_adapter"
+      },
+      "evidence_sources": [
+        "demo_adapter",
+        "case_memory"
+      ],
+      "trace_steps": 14,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+    },
+    {
+      "case_id": "HHG-018",
+      "mode": "demo_adapter",
+      "llm_enabled": false,
+      "customer_id": "C02354",
+      "transaction_id": "3491361",
+      "pattern": "out_of_region_use",
+      "verdict": "fraud",
+      "initial_probability": 0.764,
+      "final_probability": 0.764,
+      "initial_confidence": 0.9250800000000001,
+      "final_confidence": 0.9250800000000001,
+      "requested_evidence": [],
+      "final_action": "BLOCK_CARD",
+      "approval_route": "L1",
+      "sar_required": true,
+      "graph_writeback": {
+        "written": false,
+        "reference": "demo-writeback:CASE-HHG-018-MU9G2GUF",
+        "source": "demo_adapter"
+      },
+      "evidence_sources": [
+        "demo_adapter",
+        "case_memory"
+      ],
+      "trace_steps": 14,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+    },
+    {
+      "case_id": "HHG-019",
+      "mode": "demo_adapter",
+      "llm_enabled": false,
+      "customer_id": "C07987",
+      "transaction_id": "3503878",
+      "pattern": "card_not_present_new_device",
+      "verdict": "fraud",
+      "initial_probability": 0.795,
+      "final_probability": 0.795,
+      "initial_confidence": 0.9474,
+      "final_confidence": 0.9474,
+      "requested_evidence": [],
+      "final_action": "BLOCK_CARD",
+      "approval_route": "L1",
+      "sar_required": true,
+      "graph_writeback": {
+        "written": false,
+        "reference": "demo-writeback:CASE-HHG-019-MU9G2GUG",
+        "source": "demo_adapter"
+      },
+      "evidence_sources": [
+        "demo_adapter",
+        "case_memory"
+      ],
+      "trace_steps": 14,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+    },
+    {
+      "case_id": "HHG-020",
+      "mode": "demo_adapter",
+      "llm_enabled": false,
+      "customer_id": "C12265",
+      "transaction_id": "3509359",
+      "pattern": "card_not_present_new_device",
+      "verdict": "uncertain",
+      "initial_probability": 0.586,
+      "final_probability": 0.586,
+      "initial_confidence": 0.7969200000000001,
+      "final_confidence": 0.7969200000000001,
+      "requested_evidence": [],
+      "final_action": "STEP_UP_AUTH",
+      "approval_route": "auto",
+      "sar_required": false,
+      "graph_writeback": {
+        "written": false,
+        "reference": "demo-writeback:CASE-HHG-020-MU9G2GUH",
+        "source": "demo_adapter"
+      },
+      "evidence_sources": [
+        "demo_adapter",
+        "case_memory"
+      ],
+      "trace_steps": 14,
+      "explanation": "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated."
+    }
+  ]
+}

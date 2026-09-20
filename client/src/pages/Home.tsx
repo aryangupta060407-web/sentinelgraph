@@ -127,6 +127,8 @@ export default function Home() {
 
   const selectedMeta = CASE_META.find((item) => item.id === selectedId) ?? CASE_META[0];
   const selected = answers[selectedId];
+  const runtimeMode = selected?.agent?.mode ?? "demo_adapter";
+  const isLiveAgent = runtimeMode !== "demo_adapter";
   const filteredCases = useMemo(() => CASE_META.filter((item) => {
     const answer = answers[item.id];
     const matchesFilter = filter === "all" || (answer?.case.verdict === filter) || item.trigger === filter;
@@ -155,7 +157,7 @@ export default function Home() {
   return <div className="app-shell">
     <aside className={`sidebar ${sidebarOpen ? "open" : "closed"}`}>
       <div className="brand"><div className="brand-mark"><Network size={19} /></div>{sidebarOpen && <div><div className="brand-name">Sentinel<span>Graph</span></div><div className="brand-sub">FRAUD COMMAND CENTER</div></div>}</div>
-      <div className="sidebar-status"><span className="status-dot" />{sidebarOpen && <><span>Graph fabric online</span><span className="status-ping">●</span></>}</div>
+      <div className="sidebar-status"><span className="status-dot" />{sidebarOpen && <><span>{isLiveAgent ? "Live agent online" : "Demo adapter active"}</span><span className="status-ping">●</span></>}</div>
       <nav className="nav">
         {[["Case queue", Layers3], ["Investigations", Search], ["Graph explorer", GitBranch], ["Policy engine", LockKeyhole], ["Case memory", BrainCircuit]].map(([label, Icon]) => <button key={label as string} className={`nav-item ${activeNav === label ? "active" : ""}`} onClick={() => { setActiveNav(label as string); if (label === "Case queue") setView("overview"); }}><Icon size={17} />{sidebarOpen && <span>{label as string}</span>}{sidebarOpen && label === "Case queue" && <span className="nav-count">20</span>}</button>)}
       </nav>
@@ -164,7 +166,7 @@ export default function Home() {
     </aside>
 
     <main className="main-canvas">
-      <header className="topbar"><div className="breadcrumb"><span>SentinelGraph</span><ArrowRight size={13} /><b>{activeNav}</b></div><div className="top-actions"><div className="system-chip"><span className="status-dot" />TigerGraph adapter <b>READY</b></div><button className="icon-btn" aria-label="Toggle navigation" onClick={() => setSidebarOpen((value) => !value)}><Command size={17} /></button><div className="top-avatar">AM</div></div></header>
+      <header className="topbar"><div className="breadcrumb"><span>SentinelGraph</span><ArrowRight size={13} /><b>{activeNav}</b></div><div className="top-actions"><div className={`system-chip ${isLiveAgent ? "live" : "demo"}`}><span className="status-dot" />{isLiveAgent ? `${runtimeMode === "tigergraph_mcp" ? "TigerGraph MCP" : "TigerGraph RESTPP"} · LLM reasoning` : "Demo adapter · deterministic fallback"}<b>{isLiveAgent ? "LIVE" : "DEMO"}</b></div><button className="icon-btn" aria-label="Toggle navigation" onClick={() => setSidebarOpen((value) => !value)}><Command size={17} /></button><div className="top-avatar">AM</div></div></header>
 
       <div className="content-wrap">
         {view === "overview" ? <>

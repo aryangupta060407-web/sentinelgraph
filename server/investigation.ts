@@ -6,12 +6,37 @@ export type InvestigationResult = Json;
 
 const root = path.resolve(process.cwd());
 const casesDir = path.join(root, "client/public/data/cases");
+const casePackPath = path.join(root, "client/public/data/case_pack.csv");
 
 const now = () => new Date().toISOString();
 const clamp = (n: number) => Math.max(0, Math.min(1, n));
 
+function parseCsvLine(line: string): string[] {
+  const cells: string[] = [];
+  let cell = "";
+  let quoted = false;
+  for (let i = 0; i < line.length; i += 1) {
+    const char = line[i];
+    if (char === '"') quoted = !quoted;
+    else if (char === "," && !quoted) { cells.push(cell); cell = ""; }
+    else cell += char;
+  }
+  cells.push(cell);
+  return cells.map((value) => value.trim());
+}
+
+async function officialCaseMetadata(caseId: string) {
+  try {
+    const lines = (await fs.readFile(casePackPath, "utf8")).split(/\r?\n/).filter(Boolean);
+    const headers = parseCsvLine(lines[0]);
+    const values = parseCsvLine(lines.slice(1).find((line) => parseCsvLine(line)[0] === caseId) || "");
+    const row = Object.fromEntries(headers.map((header, index) => [header, values[index] || ""]));
+    return { caseId: row.case_id, transactionId: row.flagged_txn_id, customerId: row.customer_id, cardId: row.card_id, trigger: row.trigger_type, riskScore: Number(row.risk_score || 0) };
+  } catch { return { caseId, transactionId: "", customerId: "", cardId: "", trigger: "analyst_request", riskScore: 0 }; }
+}
+
 export type GraphEvidence = {
-  source: "tigergraph" | "demo_adapter" | "case_memory" | "policy";
+  source: "tigergraph" | "tigergraph_mcp" | "demo_adapter" | "case_memory" | "policy";
   query: string;
   claim: string;
   entities: string[];
@@ -47,6 +72,26 @@ class TigerGraphRestTools implements GraphTools {
   async writeCase(caseId: string, state: Json) { await this.query("write_case", { case_id: caseId, ...state }); return { written: true, reference: caseId, source: "tigergraph" }; }
 }
 
+class TigerGraphMcpTools implements GraphTools {
+  private endpoint = process.env.TIGERGRAPH_MCP_URL || "";
+  private token = process.env.TIGERGRAPH_MCP_TOKEN || "";
+  private async call(name: string, args: Json) {
+    const response = await fetch(this.endpoint, { method: "POST", headers: { "Content-Type": "application/json", ...(this.token ? { Authorization: `Bearer ${this.token}` } : {}) }, body: JSON.stringify({ jsonrpc: "2.0", id: `${name}-${Date.now()}`, method: "tools/call", params: { name, arguments: args } }) });
+    if (!response.ok) throw new Error(`TigerGraph MCP ${name} failed: ${response.status}`);
+    const payload = await response.json() as Json;
+    if (payload.error) throw new Error(`TigerGraph MCP ${name}: ${payload.error.message || "tool error"}`);
+    return payload.result;
+  }
+  private evidence(query: string, claim: string, entities: string[]): GraphEvidence { return { source: "tigergraph_mcp", query, claim, entities }; }
+  async transactionContext(transactionId: string) { const data = await this.call("get_transaction_context", { transaction_id: transactionId }); return this.evidence("get_transaction_context", `TigerGraph MCP returned transaction context for ${transactionId}.`, [transactionId, JSON.stringify(data).slice(0, 180)]); }
+  async customerHistory(customerId: string) { const data = await this.call("get_customer_history", { customer_id: customerId }); return this.evidence("get_customer_history", `TigerGraph MCP returned customer history for ${customerId}.`, [customerId, JSON.stringify(data).slice(0, 180)]); }
+  async connectedEntities(transactionId: string) { const data = await this.call("get_connected_entities", { transaction_id: transactionId }); return this.evidence("get_connected_entities", `TigerGraph MCP traversed connected entities for ${transactionId}.`, [transactionId, JSON.stringify(data).slice(0, 180)]); }
+  async deviceInvestigation(transactionId: string) { const data = await this.call("investigate_device", { transaction_id: transactionId }); return this.evidence("investigate_device", `TigerGraph MCP returned device investigation evidence for ${transactionId}.`, [transactionId, JSON.stringify(data).slice(0, 180)]); }
+  async previousFraudCases(customerId: string, pattern = "") { const data = await this.call("find_similar_cases", { customer_id: customerId, pattern }); return { source: "tigergraph_mcp" as const, query: "find_similar_cases", claim: `TigerGraph MCP returned historical cases for ${customerId}.`, entities: [customerId, JSON.stringify(data).slice(0, 180)] }; }
+  async detectPattern(transactionId: string) { const data = await this.call("detect_fraud_pattern", { transaction_id: transactionId }); return this.evidence("detect_fraud_pattern", `TigerGraph MCP detected fraud-pattern evidence for ${transactionId}.`, [transactionId, JSON.stringify(data).slice(0, 180)]); }
+  async writeCase(caseId: string, state: Json) { const data = await this.call("write_case", { case_id: caseId, ...state }); return { written: true, reference: JSON.stringify(data).slice(0, 220) || caseId, source: "tigergraph_mcp" }; }
+}
+
 class DemoGraphTools implements GraphTools {
   private async answer(id: string): Promise<Json> { try { return JSON.parse(await fs.readFile(path.join(casesDir, `${id}.json`), "utf8")); } catch { return {}; } }
   private async context(id: string) { return this.answer(id); }
@@ -60,7 +105,34 @@ class DemoGraphTools implements GraphTools {
   async writeCase(caseId: string) { return { written: false, reference: `demo-writeback:${caseId}`, source: "demo_adapter" }; }
 }
 
-function tools(): GraphTools { return process.env.TIGERGRAPH_HOST ? new TigerGraphRestTools() : new DemoGraphTools(); }
+function tools(): GraphTools { return process.env.TIGERGRAPH_MCP_URL ? new TigerGraphMcpTools() : process.env.TIGERGRAPH_HOST ? new TigerGraphRestTools() : new DemoGraphTools(); }
+
+type AgentPlan = { pattern: string; relevant_evidence_queries: string[]; needs_more_evidence: boolean; evidence_request_type: string; evidence_request_reason: string; recommended_action: string; action_reason: string; confidence_delta: number; explanation: string };
+
+const agentPlanSchema = { type: "object", properties: {
+  pattern: { type: "string" }, relevant_evidence_queries: { type: "array", items: { type: "string" } }, needs_more_evidence: { type: "boolean" }, evidence_request_type: { type: "string" }, evidence_request_reason: { type: "string" }, recommended_action: { type: "string" }, action_reason: { type: "string" }, confidence_delta: { type: "number" }, explanation: { type: "string" },
+}, required: ["pattern", "relevant_evidence_queries", "needs_more_evidence", "evidence_request_type", "evidence_request_reason", "recommended_action", "action_reason", "confidence_delta", "explanation"], additionalProperties: false };
+
+function fallbackPlan(base: Json, evidence: GraphEvidence[], probability: number, uncertainty: number): AgentPlan {
+  const hasNetwork = evidence.some((item) => item.query === "connected_entities" || item.query === "device_investigation");
+  const hasMemory = evidence.some((item) => item.query === "similar_cases");
+  const needs = uncertainty > 0.25 && !hasNetwork;
+  const recommended_action = hasNetwork && probability >= 0.72 ? "BLOCK_CARD" : needs ? "STEP_UP_AUTH" : probability >= 0.58 ? "STEP_UP_AUTH" : "MONITOR_ACCOUNT";
+  return { pattern: base.pattern || (hasNetwork ? "connected_entity_activity" : "unclassified_suspicious_activity"), relevant_evidence_queries: evidence.map((item) => item.query), needs_more_evidence: needs, evidence_request_type: needs ? "STEP_UP_AUTH" : "NONE", evidence_request_reason: needs ? "Conflicting or incomplete identity evidence leaves the decision boundary unresolved; customer verification is the least irreversible next step." : "The connected-device and historical evidence is sufficient for a policy check.", recommended_action, action_reason: hasNetwork ? "The graph neighborhood provides a connected-entity signal that outweighs the raw risk score." : "The bounded evidence does not support an irreversible control, so monitoring or reversible verification is safer.", confidence_delta: needs ? 0.16 : 0, explanation: "Fallback reasoning used because no LLM provider was enabled; all evidence remains bounded and policy-gated." };
+}
+
+async function reasonWithLLM(context: Json, fallback: AgentPlan): Promise<{ plan: AgentPlan; enabled: boolean; error?: string }> {
+  if (process.env.LLM_REASONING_ENABLED !== "true" || !process.env.BUILT_IN_FORGE_API_URL || !process.env.BUILT_IN_FORGE_API_KEY) return { plan: fallback, enabled: false };
+  try {
+    const response = await fetch(`${process.env.BUILT_IN_FORGE_API_URL.replace(/\/$/, "")}/v1/chat/completions`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${process.env.BUILT_IN_FORGE_API_KEY}` }, body: JSON.stringify({ model: process.env.LLM_MODEL || "gpt-5-mini", messages: [{ role: "system", content: "You are the SentinelGraph fraud investigation agent. Reason only over the bounded evidence ledger. The deterministic policy engine is the final authority; never claim an action is permitted. Treat bank risk as a trigger, not a verdict. Output JSON only." }, { role: "user", content: JSON.stringify(context) }], response_format: { type: "json_schema", json_schema: { name: "agent_plan", strict: true, schema: agentPlanSchema } }, max_completion_tokens: 900 }) });
+    if (!response.ok) throw new Error(`LLM reasoning failed: ${response.status}`);
+    const payload = await response.json() as Json;
+    const content = payload.choices?.[0]?.message?.content;
+    const plan = typeof content === "string" ? JSON.parse(content) as AgentPlan : null;
+    if (!plan || typeof plan.recommended_action !== "string") throw new Error("LLM returned an invalid agent plan");
+    return { plan: { ...fallback, ...plan }, enabled: true };
+  } catch (error) { return { plan: fallback, enabled: false, error: error instanceof Error ? error.message : "LLM reasoning unavailable" }; }
+}
 
 async function loadReference(caseId: string): Promise<Json> { try { return JSON.parse(await fs.readFile(path.join(casesDir, `${caseId}.json`), "utf8")); } catch { return { case_id: caseId, case: { fraud_probability: 0.5, verdict: "uncertain", pattern: "unclassified activity", summary: "No benchmark reference was available; additional evidence is required.", evidence: [], similar_prior_cases: [], affected_txn_ids: [caseId] }, evidence_requests: [], next_best_actions: { initial: [], final: [], what_changed: "Reference not available." }, sar: { file: false, reason: "No reference." }, stop_reason: "Evidence threshold not reached." }; } }
 
@@ -74,9 +146,11 @@ function policyGate(probability: number, uncertainty: number, action: string) {
 export async function investigateCase(caseId: string, trigger = "analyst_request"): Promise<InvestigationResult> {
   const reference = await loadReference(caseId);
   const base = reference.case || {};
-  const txn = base.first_suspicious_txn_id || base.affected_txn_ids?.[0] || caseId;
-  const customer = base.connected_card_ids?.[0] || "unknown-customer";
-  const trace: Json[] = [{ time: now(), status: "complete", step: "trigger_received", label: "Trigger received", detail: trigger }, { time: now(), status: "complete", step: "case_opened", label: "Case created", detail: `Opened ${caseId}` }];
+  const official = await officialCaseMetadata(caseId);
+  const txn = official.transactionId || base.first_suspicious_txn_id || base.affected_txn_ids?.[0] || caseId;
+  const customer = official.customerId || "unknown-customer";
+  const card = official.cardId || "unknown-card";
+  const trace: Json[] = [{ time: now(), status: "complete", step: "trigger_received", label: "Trigger received", detail: trigger }, { time: now(), status: "complete", step: "case_opened", label: "Case created", detail: `Opened ${caseId} for customer ${customer}` }];
   const graph = tools();
   const evidence: GraphEvidence[] = [];
   const run = async (step: string, label: string, fn: () => Promise<GraphEvidence>) => { try { const item = await fn(); evidence.push(item); trace.push({ time: now(), status: "complete", step, label, detail: item.claim, source: item.source }); return item; } catch (error) { trace.push({ time: now(), status: "warning", step, label, detail: String(error) }); return null; } };
@@ -86,13 +160,18 @@ export async function investigateCase(caseId: string, trigger = "analyst_request
   await run("customer_history", "Retrieved customer history", () => graph.customerHistory(customer));
   const pattern = await run("pattern_detection", "Detected fraud pattern", () => graph.detectPattern(txn));
   const memory = await run("memory_retrieval", "Retrieved similar historical cases", () => graph.previousFraudCases(customer, base.pattern));
-  const initial = clamp(Number(base.fraud_probability ?? 0.5));
+  const initial = clamp(Number(base.fraud_probability ?? official.riskScore ?? 0.5));
   const evidenceQuality = Math.min(0.18, evidence.filter((e) => e.source !== "demo_adapter").length * 0.05 + evidence.filter((e) => e.source === "demo_adapter").length * 0.025);
   let confidence = clamp(initial * 0.72 + 0.2 + evidenceQuality);
   const initialUncertainty = clamp(1 - confidence);
   trace.push({ time: now(), status: "complete", step: "assessed", label: "Assessed risk and confidence", detail: `Initial confidence ${Math.round(confidence * 100)}%` });
-  const needsEvidence = initialUncertainty > 0.25 && base.verdict === "uncertain";
-  const requested = needsEvidence ? { type: "STEP_UP_AUTH", reason: "Evidence is insufficient at the decision boundary; request a reversible customer challenge." } : null;
+  const retrievedContext = { current_case: { case_id: caseId, transaction_id: txn, customer_id: customer, card_id: card, trigger, bank_risk_score: initial }, evidence: evidence.map((item) => ({ source: item.source, query: item.query, claim: item.claim, entities: item.entities })), memory: evidence.find((item) => item.query === "similar_cases") || null, fraud_patterns: evidence.find((item) => item.query === "fraud_pattern_detection") || null, policy: { protected_actions_require_approval: true, reversible_evidence_action: "STEP_UP_AUTH", report_approval_route: "L2" }, regulatory_context: "Do not file or execute a protected action without the deterministic approval route." };
+  const fallback = fallbackPlan(base, evidence, initial, initialUncertainty);
+  const reasoning = await reasonWithLLM(retrievedContext, fallback);
+  trace.push({ time: now(), status: reasoning.enabled ? "complete" : "simulated", step: "agent_reasoning", label: reasoning.enabled ? "Agent reasoned over bounded GraphRAG context" : "Deterministic agent fallback reasoned over bounded context", detail: reasoning.plan.explanation, source: reasoning.enabled ? "llm" : "demo_adapter" });
+  if (reasoning.error) trace.push({ time: now(), status: "warning", step: "llm_fallback", label: "LLM unavailable; fallback preserved", detail: reasoning.error });
+  const needsEvidence = reasoning.plan.needs_more_evidence;
+  const requested = needsEvidence ? { type: reasoning.plan.evidence_request_type || "STEP_UP_AUTH", reason: reasoning.plan.evidence_request_reason } : null;
   let finalConfidence = confidence;
   let finalProbability = initial;
   let changed = "No additional evidence was required; the initial decision boundary was defensible.";
@@ -102,20 +181,22 @@ export async function investigateCase(caseId: string, trigger = "analyst_request
     const response = base.verdict === "fraud" ? "challenge_failed" : "challenge_passed";
     const delta = response === "challenge_failed" ? 0.12 : -0.1;
     finalProbability = clamp(initial + delta);
-    finalConfidence = clamp(confidence + 0.16);
+    finalConfidence = clamp(confidence + Math.max(0.1, reasoning.plan.confidence_delta || 0.16));
     trace.push({ time: now(), status: "complete", step: "evidence_received", label: "Evidence received", detail: `Step-up response: ${response}` });
     trace.push({ time: now(), status: "complete", step: "reassessed", label: "Recalculated confidence", detail: `Updated confidence ${Math.round(finalConfidence * 100)}%` });
     changed = `Step-up response ${response} changed the recommendation by ${Math.round(Math.abs(delta) * 100)} percentage points.`;
   }
   const uncertainty = clamp(1 - finalConfidence);
-  const finalAction = finalProbability >= 0.78 ? "BLOCK_CARD" : finalProbability >= 0.58 ? "STEP_UP_AUTH" : "MONITOR_ACCOUNT";
+  const permittedActionNames = new Set(["BLOCK_CARD", "BLOCK_TRANSACTION", "BLOCK_ACCOUNT", "FILE_REPORT", "STEP_UP_AUTH", "VERIFY_CUSTOMER", "CREATE_CASE", "MONITOR_ACCOUNT", "ALLOW_WITH_MONITORING"]);
+  const finalAction = permittedActionNames.has(reasoning.plan.recommended_action) ? reasoning.plan.recommended_action : fallback.recommended_action;
   const gate = policyGate(finalProbability, uncertainty, finalAction);
   trace.push({ time: now(), status: "complete", step: "next_best_action", label: "Selected next-best action", detail: finalAction });
   trace.push({ time: now(), status: gate.allowed ? "complete" : "approval", step: "policy_checked", label: "Checked approval route", detail: `${gate.route} · ${gate.reason}` });
   const caseIdOut = `CASE-${caseId}-${Date.now().toString(36).toUpperCase()}`;
-  const written = await graph.writeCase(caseIdOut, { status: gate.allowed ? "monitoring" : "awaiting_approval", verdict: finalProbability >= 0.72 ? "fraud" : "uncertain", probability: finalProbability, pattern: base.pattern || pattern?.claim || "unclassified", exposure: base.exposure_usd || 0, summary: changed });
+  const written = await graph.writeCase(caseIdOut, { status: gate.allowed ? "monitoring" : "awaiting_approval", verdict: finalProbability >= 0.72 ? "fraud" : "uncertain", probability: finalProbability, pattern: reasoning.plan.pattern || base.pattern || pattern?.claim || "unclassified", exposure: base.exposure_usd || 0, summary: changed, evidence, findings: [reasoning.plan.explanation], selected_action: finalAction, approval_route: gate.route, outcome: gate.allowed ? "executed_or_monitored" : "approval_required", memory: memory?.entities || [] });
   trace.push({ time: now(), status: written.written ? "complete" : "simulated", step: "case_writeback", label: written.written ? "Case written to TigerGraph" : "Case write-back simulated", detail: written.reference });
   trace.push({ time: now(), status: "complete", step: "memory_written", label: written.written ? "Memory written" : "Memory retained in demo adapter", detail: written.source });
-  const initialAction = needsEvidence ? "STEP_UP_AUTH" : (base.next_best_actions?.initial?.[0]?.action || "CREATE_CASE");
-  return { ...reference, case_id: caseId, agent: { mode: process.env.TIGERGRAPH_HOST ? "tigergraph" : "demo_adapter", trigger, transaction_id: txn, customer_id: customer, initial_confidence: confidence, final_confidence: finalConfidence, initial_probability: initial, final_probability: finalProbability, uncertainty, evidence, requested_evidence: requested ? [requested] : [], returned_evidence: requested ? [{ type: "STEP_UP_AUTH", response: base.verdict === "fraud" ? "challenge_failed" : "challenge_passed" }] : [], activity_trace: trace, policy: { action: finalAction, ...gate }, case_writeback: written, changed_recommendation: changed }, next_best_actions: { ...(reference.next_best_actions || {}), initial: [{ action: initialAction, route: policyGate(initial, 1 - confidence, initialAction).route, reason: "Initial evidence-gathering decision." }], final: [{ action: finalAction, route: gate.route, reason: gate.reason }], what_changed: changed }, case: { ...base, status: gate.allowed ? "monitoring" : "awaiting_approval", fraud_probability: finalProbability, written_to_graph: written.written, graph_case_id: written.reference, evidence: [...(base.evidence || []), ...evidence.map((x) => ({ claim: x.claim, source: x.source, ref: x.query, entity_ids: x.entities }))], similar_prior_cases: memory?.entities || base.similar_prior_cases || [], summary: changed } };
+  const initialAction = needsEvidence ? (requested?.type || "STEP_UP_AUTH") : reasoning.plan.recommended_action;
+  const graphMode = process.env.TIGERGRAPH_MCP_URL ? "tigergraph_mcp" : process.env.TIGERGRAPH_HOST ? "tigergraph_restpp" : "demo_adapter";
+  return { ...reference, case_id: caseId, agent: { mode: graphMode, llm_enabled: reasoning.enabled, trigger, transaction_id: txn, customer_id: customer, card_id: card, initial_confidence: confidence, final_confidence: finalConfidence, initial_probability: initial, final_probability: finalProbability, uncertainty, reasoning: reasoning.plan, grounded_context: retrievedContext, evidence, requested_evidence: requested ? [requested] : [], returned_evidence: requested ? [{ type: requested.type, response: base.verdict === "fraud" ? "challenge_failed" : "challenge_passed", reason: "Controlled demo response; replace with approved external evidence provider in live mode." }] : [], activity_trace: trace, policy: { action: finalAction, ...gate }, case_writeback: written, changed_recommendation: changed }, next_best_actions: { ...(reference.next_best_actions || {}), initial: [{ action: initialAction, route: policyGate(initial, 1 - confidence, initialAction).route, reason: reasoning.plan.action_reason }], final: [{ action: finalAction, route: gate.route, reason: gate.reason }], what_changed: changed }, case: { ...base, status: gate.allowed ? "monitoring" : "awaiting_approval", fraud_probability: finalProbability, pattern: reasoning.plan.pattern, written_to_graph: written.written, graph_case_id: written.reference, evidence: [...(base.evidence || []), ...evidence.map((x) => ({ claim: x.claim, source: x.source, ref: x.query, entity_ids: x.entities }))], similar_prior_cases: memory?.entities || base.similar_prior_cases || [], summary: reasoning.plan.explanation } };
 }
